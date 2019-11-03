@@ -8,6 +8,7 @@ function form(props) {
             <h3>Enter proper product name</h3>
             <form onSubmit={props.formSubmit} className={classes.MainForm} >
                 <TextField
+                    autoFocus
                     label="Product"
                     className={classes.productField}
                     value={props.product}

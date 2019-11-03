@@ -13,7 +13,8 @@ class Main extends Component {
         product: '',
         searching: false,
         spinner: false,
-        links: []
+        links: [],
+        error: false
     }
     handleInputChange = (event) => {
         this.setState({ product: event.target.value })
@@ -27,48 +28,46 @@ class Main extends Component {
         event.preventDefault();
         axios.post('/rest/links', { product: this.state.product })
             .then((res) => {
-                if (typeof res.data == 'string') {
-                    console.log(res.data);
-                    this.setState({ spinner: false, searching: false })
-                }
-                else {
-                    console.log(res.data);
-                    this.setState({
-                        links: res.data,
-                        spinner: false,
-                        searching: false,
-                    })
-                }
+                this.setState({
+                    links: res.data,
+                    spinner: false,
+                    searching: false,
+                })
 
             })
             .catch((err) => {
+                this.setState({ error: true, spinner: false })
                 return console.log(err);
             })
 
     }
     render() {
+        const { scrapping, links, spinner, product } = this.state;
+        const photo = this.state.links.photo;
         return (
+
             <div className={classes.Main}>
+                <h3>Make sure you have strong internet connection!</h3>
                 <Form
-                    product={this.state.product}
+                    product={product}
                     inputChange={this.handleInputChange}
                     formSubmit={(event) => this.handleForm(event)}
-                    scrapping={this.state.scrapping} />
+                    scrapping={scrapping} />
 
-                {this.state.spinner ? <Spinner /> : null}
+                {spinner ? <Spinner /> : null}
 
-                {this.state.links ? this.state.links.map((data) => {
+                {links.data ? links.data.map((data) => {
                     return (
                         <Card
+                            product={this.state.product}
                             key={Math.random()}
                             title={data.title}
                             link={data.link}
-                            imgLink={data.photoUrl}
+                            imgLink={photo}
                             src={data.source}
                         />
                     )
                 }) : null}
-                {/* <Card /> */}
             </div>
         )
     }

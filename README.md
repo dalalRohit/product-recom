@@ -1,5 +1,16 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## How to use
+
+Download zip file <br>
+Extract it on Desktop <br/>
+Open terminal with this project <br>
+run `npm install` => To install _react dependencies_ <br>
+`cd backend` => Change _dir_ to /backend <br>
+`npm install` => Install packages in _backend_ folder <br>
+
+
+
 ## Available Scripts
 
 In the project directory, you can run:
