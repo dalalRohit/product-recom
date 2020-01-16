@@ -26,7 +26,7 @@ router.post('/links', async function (req, res, next) {
 
     //scrapped results from links.js
     var info = await scrape(product);
-    var imgLink = info.imgLink;
+    // var imgLink = info.imgLink;
 
 
     var data = [...new Set(info.data)];
@@ -41,7 +41,7 @@ router.post('/links', async function (req, res, next) {
         //add new product to already saved data
         allLinks[product] = {
             data,
-            photo: imgLink
+            // photo: imgLink
         };
 
         dataRef.set(allLinks, function (err) {

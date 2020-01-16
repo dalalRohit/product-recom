@@ -14,7 +14,8 @@ class Main extends Component {
         searching: false,
         spinner: false,
         links: [],
-        error: false
+        error: false,
+        errorMsg: ''
     }
     handleInputChange = (event) => {
         this.setState({ product: event.target.value })
@@ -33,7 +34,6 @@ class Main extends Component {
                     spinner: false,
                     searching: false,
                 })
-
             })
             .catch((err) => {
                 this.setState({ error: true, spinner: false })
@@ -42,7 +42,7 @@ class Main extends Component {
 
     }
     render() {
-        const { scrapping, links, spinner, product } = this.state;
+        const { scrapping, links, spinner, product, errorMsg } = this.state;
         const photo = this.state.links.photo;
         return (
 
@@ -55,6 +55,8 @@ class Main extends Component {
                     scrapping={scrapping} />
 
                 {spinner ? <Spinner /> : null}
+
+                {errorMsg.length > 0 ? errorMsg : null}
 
                 {links.data ? links.data.map((data) => {
                     return (

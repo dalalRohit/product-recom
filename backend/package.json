@@ -19,7 +19,7 @@
     "http-errors": "~1.6.2",
     "moment": "^2.24.0",
     "morgan": "~1.9.0",
-    "puppeteer": "^1.19.0"
+    "puppeteer-core": "^2.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
