@@ -11,6 +11,7 @@ var helmet = require('helmet')
 
 var restRouter = require('./routes/rest');
 var app = express();
+app.use('/public', express.static(path.join(__dirname, './public')));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

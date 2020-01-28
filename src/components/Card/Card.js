@@ -15,6 +15,7 @@ function Card(props) {
                     <h5>Product Image</h5>
                     <img
                         alt={`This is visual of ${props.product}`}
+                        title={`This is visual of ${props.product}`}
                         src={props.imgLink}
                         className={classes.Img}
                         width="171px"
@@ -28,6 +29,7 @@ function Card(props) {
                             rel="noopener noreferrer"
                             target="_blank">{props.title}</a>
                     </div>
+
                     <div className={classes.Specs}>
                         <h5>Produt Specifications</h5>
                     </div>
@@ -37,7 +39,7 @@ function Card(props) {
 
             <div className={classes.Source}>
                 <h4>{props.src}</h4>
-                <span className={classes.Price} >$100</span>
+                <span className={classes.Price} >Price</span>
                 <img src={logoLink} width="40px" height="40px" />
             </div>
 

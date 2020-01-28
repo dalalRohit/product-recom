@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var moment = require('moment');
-const { scrape } = require('./../utils/links');
+const { scrapeLinksFromGoogle } = require('./../utils/links');
 // Firebase config file
 const { dataRef, getAllLinks } = require('./../utils/store');
 
@@ -25,13 +25,12 @@ router.post('/links', async function (req, res, next) {
     }
 
     //scrapped results from links.js
-    var info = await scrape(product);
-    // var imgLink = info.imgLink;
-
+    var info = await scrapeLinksFromGoogle(product);
+    var imgLink = info.imgLink;
 
     var data = [...new Set(info.data)];
     data = data.filter((i) => {
-        // i['photoUrl'] = imgLink;
+        i['photoUrl'] = imgLink;
         i['timestamp'] = moment().format('MMMM Do YYYY, h:mm:ss a');
         i['used'] = 1;
         return i;
@@ -41,7 +40,7 @@ router.post('/links', async function (req, res, next) {
         //add new product to already saved data
         allLinks[product] = {
             data,
-            // photo: imgLink
+            photo: imgLink
         };
 
         dataRef.set(allLinks, function (err) {
@@ -49,11 +48,11 @@ router.post('/links', async function (req, res, next) {
                 return alert('Unable to save data!');
             }
         });
-        return res.send(allLinks[product]);
+        return res.status(201).send(allLinks[product]);
     }
     else {
         return res.status(400).send({
-            msg: `No product found for ${product}`,
+            msg: `No product found of name ${product}`,
             error: true
         });
     }

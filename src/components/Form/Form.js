@@ -20,7 +20,7 @@ function form(props) {
                     color="primary"
                     className={classes.Button}
                     onClick={props.formSubmit}
-                    disabled={(props.product.length > 0) ? null : true}
+                    disabled={!props.product.length > 0 ? true : null}
                 >
                     Search
                 </Button>

@@ -1,7 +1,7 @@
 .Card{
-    width: 50%;
+    width: 70%;
     max-width: 100%;
-    margin: 10px 25% 10px 25%;
+    margin: 10px 15% 10px 15%;
     border: 1px solid darkgrey;
     box-sizing: border-box;
     padding: 10px;
@@ -30,14 +30,32 @@ a:hover{
     padding: 10px;
     border-right: 1px solid black;
 }
-
-
+.TechDesc{
+    border: 1px solid red;
+    padding: .5rem;
+    display: flex;
+    justify-content: space-between;
+}
+.TechDesc ul li{
+    list-style-type: decimal;
+}
+@media(max-width:699px){
+    .TechDesc{
+        flex-flow: column;
+    }
+}
 .Desc{
-    width: 70%;
+    width: 90%;
     max-width: 100%;
     box-sizing: border-box;
     /* border: 1px solid magenta; */
     padding: 10px;
+}
+
+.List1,.List2{
+    width: 100%;
+    border: 1px solid purple;
+    padding: .2rem;
 }
 
 .ProdTitle{

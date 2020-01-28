@@ -6,7 +6,7 @@ import axios from 'axios';
 import Spinner from './../../components/UI/Spinner/Spinner';
 import Form from './../../components/Form/Form';
 import Card from './../../components/Card/Card'
-
+import Error from './../../components/UI/Error/Error';
 
 class Main extends Component {
     state = {
@@ -15,35 +15,41 @@ class Main extends Component {
         spinner: false,
         links: [],
         error: false,
-        errorMsg: ''
+        errorMsg: '',
     }
     handleInputChange = (event) => {
         this.setState({ product: event.target.value })
     }
     handleForm = (event) => {
+        event.preventDefault();
         this.setState({
             spinner: true,
             searching: true,
             links: []
         })
-        event.preventDefault();
         axios.post('/rest/links', { product: this.state.product })
             .then((res) => {
-                this.setState({
-                    links: res.data,
-                    spinner: false,
-                    searching: false,
-                })
+                if (!res.data.error) {
+                    this.setState({
+                        links: res.data,
+                        spinner: false,
+                        searching: false,
+                    })
+                }
+
+
             })
             .catch((err) => {
-                this.setState({ error: true, spinner: false })
-                return console.log(err);
+                this.setState({ error: true, spinner: false, searching: false })
+                console.error(err);
             })
+
+
 
     }
     render() {
-        const { scrapping, links, spinner, product, errorMsg } = this.state;
-        const photo = this.state.links.photo;
+        const { searching, links, spinner, product, error } = this.state;
+        const photo = links.photo;
         return (
 
             <div className={classes.Main}>
@@ -52,11 +58,11 @@ class Main extends Component {
                     product={product}
                     inputChange={this.handleInputChange}
                     formSubmit={(event) => this.handleForm(event)}
-                    scrapping={scrapping} />
+                    searching={searching} />
 
                 {spinner ? <Spinner /> : null}
 
-                {errorMsg.length > 0 ? errorMsg : null}
+                {error ? <Error msg={this.state.errorMsg} /> : null}
 
                 {links.data ? links.data.map((data) => {
                     return (
@@ -70,6 +76,8 @@ class Main extends Component {
                         />
                     )
                 }) : null}
+
+                {/* <Card /> */}
             </div>
         )
     }
