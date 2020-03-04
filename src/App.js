@@ -4,6 +4,9 @@ import Auxi from './hoc/Auxi/Auxi';
 import Layout from './components/Layout/Layout';
 import Main from './containers/Main/Main';
 
+// Testing
+import Cards from './containers/Cards/Cards';
+
 class App extends Component {
   render() {
     return (
@@ -11,6 +14,7 @@ class App extends Component {
         <Layout>
           <div className={classes.App}>
             <Main />
+            {/* <Cards /> */}
           </div>
         </Layout>
       </Auxi>

@@ -9,51 +9,129 @@ import Card from './../../components/Card/Card'
 import Error from './../../components/UI/Error/Error';
 
 class Main extends Component {
+
     state = {
         product: '',
         searching: false,
         spinner: false,
         links: [],
+        savedLinks: {},
         error: false,
         errorMsg: '',
+        savedProds: []
     }
+
+    // Helper functions =====================>START
+    componentDidMount = () => {
+        axios.get('/rest/show_links').then((res) => {
+            console.log('----------Main.js--------- 27 \n',res.data);
+            let result = { ...res.data };
+            let currProdsArray = Object.keys(result).map((prod) => {
+                return prod
+            })
+
+            this.setState({
+                savedLinks: result,
+                savedProds: currProdsArray
+            })
+        })
+
+    }
+
+    // Delete all links from firebase
+    deleteLinks = () => {
+        axios.get('/rest/delete_links').then((res) => {
+            alert(res.data);
+            this.setState({
+                savedProds: [],
+                savedLinks: {}
+            })
+        })
+    }
+
+    // Show all product names from firebase
+    showAllLinks = () => {
+        axios.get('/rest/show_links').then((res) => {
+            let data = { ...res.data };
+            let prods = Object.keys(data).map((prod) => {
+                return prod.trim();
+            });
+            if (prods.length == 0) alert('No products to show')
+            else {
+                this.setState({
+                    savedProds: prods
+                })
+            }
+
+        })
+    }
+    // Helper functions ======================>END
+
+
+
     handleInputChange = (event) => {
         this.setState({ product: event.target.value })
     }
+
+    // onFormSbumitHandler
     handleForm = (event) => {
         event.preventDefault();
+        
+ 
+        
+        const { product, savedProds, savedLinks } = this.state;
         this.setState({
             spinner: true,
             searching: true,
             links: []
         })
-        axios.post('/rest/links', { product: this.state.product })
-            .then((res) => {
-                if (!res.data.error) {
-                    this.setState({
-                        links: res.data,
-                        spinner: false,
-                        searching: false,
-                    })
-                }
 
+        axios.post('/rest/links', { product })
+            .then((res) => {
+                console.log('--------Main.js------- 97 \n',res.data)
+                console.log('--------Main.js------- 92 \n',res.data.msg);
+                this.setState({
+                    links: res.data.savedLinks,
+                    spinner: false,
+                    searching: false,
+                })
 
             })
             .catch((err) => {
                 this.setState({ error: true, spinner: false, searching: false })
                 console.error(err);
             })
-
-
-
+        /*
+        axios.post('/rest/get_features',{prod:this.state.product})
+            .then( (res) => {
+                console.log('--------------- Main.js [FEATURES]--------- 106 \n',res.data);
+            })
+            .catch( (err) => {
+                return console.log(err);
+            })
+        */
     }
+
+
     render() {
-        const { searching, links, spinner, product, error } = this.state;
+        const { searching, links, spinner, product, error, savedProds, savedLinks } = this.state;
         const photo = links.photo;
+        
         return (
 
             <div className={classes.Main}>
                 <h3>Make sure you have strong internet connection!</h3>
+                
+                {/* HELPER CODE */}
+                <button onClick={this.showAllLinks}>Show all links</button>
+
+                {savedProds.length > 0 ? savedProds.map((prod) => {
+                    return <li key={Math.random()}>{prod}</li>
+                }) : null}
+
+                <button onClick={this.deleteLinks}>Delete all </button>
+                {/* HELPER CODE */}
+
                 <Form
                     product={product}
                     inputChange={this.handleInputChange}

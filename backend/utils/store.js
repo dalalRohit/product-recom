@@ -2,7 +2,6 @@ require('dotenv').config();
 
 // ********************************START => FIREBASE*****************************
 var firebase = require("firebase-admin");
-// var serviceAccount = require("./../key.json");
 var creds = {
     type: process.env.type,
     project_id: process.env.project_id,
@@ -19,9 +18,10 @@ firebase.initializeApp({
     credential: firebase.credential.cert(creds),
     databaseURL: "https://product-recom.firebaseio.com"
 });
+
 var db = firebase.database();
 var ref = db.ref();
-var dataRef = ref.child("links");
+var dataRef = ref.child("database");
 // ********************************END => FIREBASE*****************************
 
 //Function to get all data from Firebase
@@ -31,6 +31,14 @@ const getAllLinks = async () => {
     return links;
 }
 
+const deleteAllLinks = async () => {
+    let x = await dataRef.remove();
+    return x;
+}
+
+// deleteAllLinks().then((res) => {
+//     console.log(res);
+// })
 
 // getAllLinks().then((res) => {
 //     console.log(res);
@@ -38,5 +46,6 @@ const getAllLinks = async () => {
 
 module.exports = {
     dataRef,
-    getAllLinks
+    getAllLinks,
+    deleteAllLinks,
 }

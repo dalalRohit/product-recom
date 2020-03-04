@@ -19,3 +19,8 @@
   box-sizing: border-box;
   font-family: 'Raleway', Roboto;
 }
+
+html{
+  width: 100%;
+  height: 100%;
+}

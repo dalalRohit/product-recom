@@ -7,6 +7,7 @@ var logger = require('morgan');
 const cors = require('cors')
 var compression = require('compression')
 var helmet = require('helmet')
+var {mongoose}=require('./db/db');
 
 
 var restRouter = require('./routes/rest');
