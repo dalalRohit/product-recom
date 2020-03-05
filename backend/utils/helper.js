@@ -28,21 +28,7 @@ var getImage = async (pBrowser, url) => {
 var getGoogleLinks = async (gBrowser, url) => {
     //TO SCRAPE GOOGLE LINKS
     var linkPage = await gBrowser.newPage();
-
-
-    //New
-    await linkPage.setRequestInterception(true);
-
-    linkPage.on('request', (req) => {
-        if(req.resourceType() === 'image' || req.resourceType() === 'stylesheet' || req.resourceType() === 'font'){
-            req.abort();
-        }
-        else {
-            req.continue();
-        }
-    });
-    //New
-
+    improvePuppy(linkPage);
     await linkPage.goto(url, { waitUntil: 'domcontentloaded' });
     linkPage.once('load', () => console.log('Product searched on Google..!'));
     let content = await linkPage.content();

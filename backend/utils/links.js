@@ -47,23 +47,50 @@ var scrapeLinksFromGoogle = async (prod) => {
     let amazonLinks=[];
     let flipkartLinks=[];
 
-    var specificLinks = allLinks.filter((d) => {
-        //d={link:'',title:''}
-        var link = String(d.link.trim());
+    // Filter amazon and flipkart links from all links
+    var specificLinks = allLinks.filter( (specificLink) => {
+        //specificLink={link:'',title:''}
+
+        var link = String(specificLink.link.trim());
 
         link = link.slice(12, link.length); //12-> index upto https://www.
         
         var src = link.slice(0, link.indexOf('/')).toLowerCase(); //get source [amazon.in]
         
-        if (src === 'amazon.in' || src === 'flipkart.com') {
-            let name=src.slice(0, src.indexOf('.'));
-            d['source'] = name //amazon
-            name==='amazon' ? amazonLinks.push(d) : flipkartLinks.push(d);
-            return d;
+        switch(src){
+            case 'amazon.in':
+                var name=src.slice(0, src.indexOf('.')); //get name [amazon]
+
+                if(link.indexOf('dp/') > 0){
+                    specificLink['source'] = name //amazon
+                    var asin=link.slice( link.indexOf('/dp/')+4 ,link.indexOf('/ref') )
+                    specificLink['asin']=asin;
+                    amazonLinks.push(specificLink)
+                    return specificLink;
+
+                }
+                break
+            case 'flipkart.com':
+                var name2=src.slice(0, src.indexOf('.')); //get name [amazon]
+
+                if(link.indexOf('/p/') > 0){
+                    specificLink['source']=name2
+                    var pid=link.slice(link.indexOf('=')+1,link.indexOf('&'));
+                    specificLink['pid']=pid;
+                    flipkartLinks.push(specificLink)
+                    return specificLink;
+
+                }
+
+                break
+            default:
+                break
         }
+
     })
 
 
+    
     scrapeAmazon(browser,amazonLinks,prod)
         .then( (data) => {
             console.log(data);
@@ -80,10 +107,13 @@ var scrapeLinksFromGoogle = async (prod) => {
             console.log(err);
         })
     
+    
     return {
         scrapedLinks: specificLinks,
         // imgLink: photoLink,
     }
+
+
         
 
 };

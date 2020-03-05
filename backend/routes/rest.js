@@ -81,10 +81,14 @@ router.post('/links', async function (req, res, next) {
 router.get('/delete_links', (req, res, next) => {
     deleteAllLinks().then((ans) => {
         console.log('All links deleted succesfully ;) ', ans);
+        res.send({
+            msg:'All links deleted succesfully ;) ',
+            ans
+        }) 
     })
 })
 
-router.get('/show_links', (req, res, next) => {
+router.get('/get_links', (req, res, next) => {
     getAllLinks().then((ans) => {
         res.send(ans);
     })
@@ -94,9 +98,25 @@ router.get('/show_links', (req, res, next) => {
 
 
 router.post('/get_features',(req,res,next) => {
-    var prod=req.body.prod.trim();
-    dataRef.child(`/${prod}/info`).on('value',function (snapshot) {
-        res.send(snapshot.val());
+    var prod=req.body.product.trim();
+    let amazonFeatures=[];
+    let flipkartFeatures=[];
+
+    dataRef.child(`/${prod}/info/amazon`).on('value',function (snapshot) {
+        amazonFeatures.push(snapshot.val())
+    }, function (err) {
+        console.log("The read failed: " + err.code);
+    })
+
+    dataRef.child(`/${prod}/info/flipkart`).on('value',function (snapshot) {
+        flipkartFeatures.push(snapshot.val())
+    }, function (err) {
+        console.log("The read failed: " + err.code);
+    })
+
+    res.send({
+        amazonFeatures,
+        flipkartFeatures
     })
 })
 module.exports = router;

@@ -5,6 +5,7 @@ var cheerio = require('cheerio');
 const { dataRef }=require('./store');
 const {improvePuppy}=require('./puppy');
 
+// Scrape amazon product specifications
 const amazonProdSpecs = (domContent) => {
     var $ = domContent;
     var features = {};
@@ -71,30 +72,11 @@ const scrapeAmazonReviews = async (browser, prodLink, product) => {
 
 // NEW METHOD TO SCRAPE ALL LINKS
 const scrapeAmazonAll=async (browser,amazonLinks,product) => {
-    let amazonAllReviews = []; 
     
-    /*
-    [   {
-            'mi a3 black':
-                {  features:,
-                    price:,
-                    data:[]
-                },
-        }
-    'mi a3 blue':....
-    ]
-    */
     let amazonBrowser = browser;
 
-    let data={};
-    /*
-        {
-            'mi a3':
-        }
-    */
-    amazonLinks.filter( async (amazonLink) => {
-
-     
+    let amazonAllReviews = amazonLinks.map( async (amazonLink) => {
+        var data={};
         var prodPage = await amazonBrowser.newPage();
 
         improvePuppy(prodPage);
@@ -130,10 +112,13 @@ const scrapeAmazonAll=async (browser,amazonLinks,product) => {
             }]
         }
 
+
         // var res = await axios.post(restapi + '/scrape-amazonAPI', { link: allReviewsLink });
         axios.post(restapi + '/scrape-amazonAPI',{link:allReviewsLink})
             .then( async (res) => {
                 data['modelOp']=res.data;
+                amazonAllReviews.push(data);
+    
                
             })
             .catch( async (err) => {
@@ -142,18 +127,14 @@ const scrapeAmazonAll=async (browser,amazonLinks,product) => {
                 }
             })
 
-            amazonAllReviews.push(data);
-        
-            dataRef.child(`${product}/info/amazon`).set(amazonAllReviews ,function (err) {
+            dataRef.child(`${product}/info/amazon`).push(data ,function (err) {
                 if(err) return err;
             });
+
             await prodPage.close();
-
-        
-
+    }); 
 
 
-    })
 
 
 

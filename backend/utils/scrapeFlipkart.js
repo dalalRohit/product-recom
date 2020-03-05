@@ -37,10 +37,9 @@ const flipkartProdSpecs=(domContent) => {
 const scrapeFlipkart = async (browser, flipkartLinks, product) => {
     let flipkartBrowser=browser;
 
-    let flipkartAllReviews = []
-    let data={};
+    let flipkartAllReviews = flipkartLinks.map( async (flipkartLink) => {
+        var data={};
 
-    flipkartLinks.filter( async (flipkartLink) => {
         var prodPage = await flipkartBrowser.newPage();
 
         improvePuppy(prodPage);
@@ -69,16 +68,17 @@ const scrapeFlipkart = async (browser, flipkartLinks, product) => {
        
         // data['modelOp']=res.data;
        
-        flipkartAllReviews.push(data);
 
-        dataRef.child(`${product}/info/flipkart`).set(flipkartAllReviews ,function (err) {
+        await prodPage.close();
+        dataRef.child(`${product}/info/flipkart`).push(data ,function (err) {
             if(err) return err;
         });
 
-
-        await prodPage.close();
-
+        return data;
     })
+
+
+
 }
 
 

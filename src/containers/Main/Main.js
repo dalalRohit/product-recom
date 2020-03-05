@@ -23,7 +23,7 @@ class Main extends Component {
 
     // Helper functions =====================>START
     componentDidMount = () => {
-        axios.get('/rest/show_links').then((res) => {
+        axios.get('/rest/get_links').then((res) => {
             console.log('----------Main.js--------- 27 \n',res.data);
             let result = { ...res.data };
             let currProdsArray = Object.keys(result).map((prod) => {
@@ -73,6 +73,17 @@ class Main extends Component {
         this.setState({ product: event.target.value })
     }
 
+    //getFeatures
+    getFeatures=(prod) => {
+        axios.post('/rest/get_features',{product:prod})
+            .then( (res) => {
+                return res.data;
+            })
+            .catch( (err) => {
+
+            })
+    }
+
     // onFormSbumitHandler
     handleForm = (event) => {
         event.preventDefault();
@@ -87,30 +98,28 @@ class Main extends Component {
         })
 
         axios.post('/rest/links', { product })
-            .then((res) => {
+            .then(async (res) => {
                 console.log('--------Main.js------- 97 \n',res.data)
                 console.log('--------Main.js------- 92 \n',res.data.msg);
+                const features=await this.getFeatures(this.state.product);
+
+                console.log('FEATURES: ',features);
                 this.setState({
                     links: res.data.savedLinks,
                     spinner: false,
                     searching: false,
                 })
 
+
             })
             .catch((err) => {
                 this.setState({ error: true, spinner: false, searching: false })
                 console.error(err);
             })
-        /*
-        axios.post('/rest/get_features',{prod:this.state.product})
-            .then( (res) => {
-                console.log('--------------- Main.js [FEATURES]--------- 106 \n',res.data);
-            })
-            .catch( (err) => {
-                return console.log(err);
-            })
-        */
+
     }
+
+
 
 
     render() {
