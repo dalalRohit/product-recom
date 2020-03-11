@@ -4,6 +4,7 @@ var cheerio = require('cheerio');
 
 const { dataRef }=require('./store');
 const {improvePuppy}=require('./puppy');
+const {amazonLinkFeatures}=require('./helper');
 
 // Scrape amazon product specifications
 const amazonProdSpecs = (domContent) => {
@@ -14,59 +15,10 @@ const amazonProdSpecs = (domContent) => {
     var price = $('#priceblock_ourprice').text();
     var image = $('#landingImage').attr('src')
 
-    labels.map((label, i) => {
+    labels.filter((label, i) => {
         features[label] = values[i];
     })
-    return { features, price, image };
-}
-
-const scrapeAmazonReviews = async (browser, prodLink, product) => {
-
-    let amazonAllReviews = {};
-    let amazonBrowser = browser;
-    var prodPage = await amazonBrowser.newPage();
-    await prodPage.goto(prodLink, { waitUntil: 'domcontentloaded' });
-    prodPage.once('load', () => console.log('Amazon product link opened..!'));
-
-    await prodPage.waitFor('.a-link-emphasis');
-
-    let prodContent = await prodPage.content();
-    var $ = cheerio.load(prodContent);
-
-    var allReviewsLink = $('.a-link-emphasis').attr('href');
-    var allReviewsText = $('.a-link-emphasis').text();
-    var { features, price, image } = amazonProdSpecs($);
-
-
-    allReviewsLink = 'https://www.amazon.in' + allReviewsLink + '&pageNumber=';
-    if (product in amazonAllReviews) {
-        amazonAllReviews[product].push({
-            text: allReviewsText,
-            link: allReviewsLink
-        })
-    }
-    else {
-        amazonAllReviews[product] = [{
-            text: allReviewsText,
-            link: allReviewsLink
-        }]
-    }
-
-    var res = await axios.post(restapi + '/scrape-amazonAPI', { link: allReviewsLink });
-    await prodPage.close();
-    
-    return new Promise( (resolve,reject) => {
-        resolve({
-            features,
-            price,
-            image,
-            modelOutput: res.data
-        })
-    });
-
-
-
-
+    return Promise.resolve({ features, price, image })
 }
 
 
@@ -75,7 +27,10 @@ const scrapeAmazonAll=async (browser,amazonLinks,product) => {
     
     let amazonBrowser = browser;
 
-    let amazonAllReviews = amazonLinks.map( async (amazonLink) => {
+    let links=[...amazonLinks];
+
+    let amazonAllReviews=links.map( async (amazonLink) => {
+        console.log(`** scraping  ${amazonLink.link} ** \n`);
         var data={};
         var prodPage = await amazonBrowser.newPage();
 
@@ -91,53 +46,47 @@ const scrapeAmazonAll=async (browser,amazonLinks,product) => {
 
         var allReviewsLink = $('.a-link-emphasis').attr('href');
         var allReviewsText = $('.a-link-emphasis').text();
-        var { features, price, image } = amazonProdSpecs($);
-
+       
+        var { features, price, image } = await amazonProdSpecs($);
         data['features']=features;
         data['price']=price;
         data['image']=image;
-        data['allReviews']=[];
 
         allReviewsLink = 'https://www.amazon.in' + allReviewsLink + '&pageNumber=';
-        if (product in data) {
-            data['allReviews'].push({
-                text: allReviewsText,
-                link: allReviewsLink
+
+        data['allReviews']={
+            text: allReviewsText,
+            link: allReviewsLink
+        };
+        
+
+
+        
+        var {prod_name,asin}=amazonLinkFeatures(allReviewsLink);
+        var filename=`${prod_name}-${asin}.csv`;
+
+        // FLASK REST API
+        console.log('** calling FLASK API for PREDICTION ** \n')
+        axios.post(`${restapi}/scrape-amazon`,{prod_name,asin,filename})
+            .then( (res) => {
+                console.log('** GOT FLASK API PREDICTION HERE ** \n',res);
+                
+            }).catch( (err) => {
+                return err;
             })
-        }
-        else {
-            data['allReviews'] = [{
-                text: allReviewsText,
-                link: allReviewsLink
-            }]
-        }
-
-
-        // var res = await axios.post(restapi + '/scrape-amazonAPI', { link: allReviewsLink });
-        axios.post(restapi + '/scrape-amazonAPI',{link:allReviewsLink})
-            .then( async (res) => {
-                data['modelOp']=res.data;
-                amazonAllReviews.push(data);
-    
-               
-            })
-            .catch( async (err) => {
-                if(err) {                        
-                    return err;
-                }
-            })
-
-            dataRef.child(`${product}/info/amazon`).push(data ,function (err) {
-                if(err) return err;
-            });
-
-            await prodPage.close();
+  
+        dataRef.child(`${product}/info/amazon`).push(data ,function (err) {
+            if(err) return err;
+        }); 
+       
+       console.log('** Printing data ** \n',data);
+       await prodPage.close();
+       return data;
     }); 
 
-
-
-
-
+    console.log('** Printing amazonAllReviews ** \n',amazonAllReviews);
+    return amazonAllReviews;
+    
 }
 
 module.exports = {

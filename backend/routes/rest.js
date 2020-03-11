@@ -4,6 +4,8 @@ var moment = require('moment');
 
 // Helper functions
 const { scrapeLinksFromGoogle } = require('./../utils/links');
+const {scrapeAmazon}=require('./../utils/scrapeAmazon');
+const {scrapeFlipkart}=require('./../utils/scrapeFlipkart');
 
 // Firebase config file
 const { dataRef, getAllLinks, deleteAllLinks } = require('./../utils/store');
@@ -11,10 +13,12 @@ const { dataRef, getAllLinks, deleteAllLinks } = require('./../utils/store');
 
 // POST /links
 router.post('/links', async function (req, res, next) {
-    var product = String(req.body.product.trim());
+    var product = String(req.body.product.trim()).toLowerCase();
 
     //--------------------GLOBAL OBJECT----------------------------------
     let allLinks = await getAllLinks() === null ? {} : await getAllLinks();
+    let amazonResult;
+    let flipkartResult;
 
     if (allLinks !== null) {
 
@@ -35,40 +39,68 @@ router.post('/links', async function (req, res, next) {
         else{
 
             //scrapped results from links.js
-            var { scrapedLinks  } = await scrapeLinksFromGoogle(product);
-            var data = [...new Set(scrapedLinks)];
-            data = data.filter((i) => {
-                // i['photoUrl'] = imgLink;
-                i['timestamp'] = moment().format('MMMM Do YYYY, h:mm:ss a');
-                i['used'] = 1;
-                return i;
-            })
-
-            if (data.length > 0) {
-                //add new product to already saved data
-                allLinks[product] = {
-                    data,
-                    // photo: imgLink
-                };
-
-                dataRef.child(`${product}/allLinks`).set(allLinks[product], function (err) {
-                    if (err) {
-                        return res.status(400).send('Unable to save data!')
-                    }
-                    else{
-                        return res.status(201).send({
-                            savedLinks:allLinks[product]
-                        });
-                    }
+            // var { scrapedLinks,imgLink  } = await scrapeLinksFromGoogle(product);
+            scrapeLinksFromGoogle(product)
+                .then( (response) => {
+                    // console.log('**inside .then() scrapeLinksFromGOogle** \n');
+                    var {browser,scrapedLinks,amazonLinks,flipkartLinks}=response;
+                    console.log('**scrappedLinks** \n',scrapedLinks);
+                    var data = [...new Set(scrapedLinks)];
                     
-                });
-                
-                
-               
-            }
+                    data = data.filter((i) => {
+                        // i['photoUrl'] = imgLink;
+                        i['timestamp'] = moment().format('MMMM Do YYYY, h:mm:ss a');
+                        i['used'] = 1;
+                        return i;
+                    })
 
+                    // if (data.length > 0) {
+                        //add new product to already saved data
+                    allLinks[product] = {
+                        data,
+                        // photo: imgLink
+                    };
+                    
+                    scrapeAmazon(browser,amazonLinks,product)
+                        .then( (answer) => {
+                            console.log('** GOT SCRAPEAMAZON RESULT ** \n',answer);
+                            
+                        })
+                        .catch( (err) => {
 
+                        })
+
+                    scrapeFlipkart(browser,flipkartLinks,product)
+                        .then( (answer) => {
+                            console.log('** GOT SCRAPEFLIPKART RESULT ** \n',answer);
+                            
+                        })
+                        .catch( (err) => {
+
+                        })
+                    
+                                                
+                    dataRef.child(`${product}/allLinks`).set(allLinks[product], function (err) {
+                        if (err) {
+                            return res.status(400).send('Unable to save data!')
+                        }
+                        // Send everything to react from here
+                        res.status(201).send({
+                            savedLinks:allLinks[product]
+                        })
+                        
+                    });
+                                        
+                    // }
+
+                })
+                .catch( (err) => {
+                    return console.log(err)
+                })
+        
         }
+
+        
     }
 
     

@@ -73,16 +73,7 @@ class Main extends Component {
         this.setState({ product: event.target.value })
     }
 
-    //getFeatures
-    getFeatures=(prod) => {
-        axios.post('/rest/get_features',{product:prod})
-            .then( (res) => {
-                return res.data;
-            })
-            .catch( (err) => {
 
-            })
-    }
 
     // onFormSbumitHandler
     handleForm = (event) => {
@@ -101,15 +92,11 @@ class Main extends Component {
             .then(async (res) => {
                 console.log('--------Main.js------- 97 \n',res.data)
                 console.log('--------Main.js------- 92 \n',res.data.msg);
-                const features=await this.getFeatures(this.state.product);
-
-                console.log('FEATURES: ',features);
                 this.setState({
                     links: res.data.savedLinks,
                     spinner: false,
                     searching: false,
                 })
-
 
             })
             .catch((err) => {
@@ -124,7 +111,7 @@ class Main extends Component {
 
     render() {
         const { searching, links, spinner, product, error, savedProds, savedLinks } = this.state;
-        const photo = links.photo;
+        // const photo = links.photo;
         
         return (
 
@@ -158,7 +145,7 @@ class Main extends Component {
                             key={Math.random()}
                             title={data.title}
                             link={data.link}
-                            imgLink={photo}
+                            // imgLink={photo}
                             src={data.source}
                         />
                     )

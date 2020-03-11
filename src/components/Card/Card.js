@@ -5,6 +5,9 @@ import flipkartLink from './../../images/flipkart-logo.png';
 
 import {IoIosArrowDown,IoIosArrowUp} from 'react-icons/io';
 
+import Specs from './../../containers/Specs/Specs';
+// import Analysis from './../../containers/Analysis/Analysis';
+
 class Card extends Component
 {
 
@@ -70,7 +73,7 @@ class Card extends Component
                     <div className={classes.SpecsTable}>
                         <h3>Specifications</h3>
 
-                        <table></table>
+                        <Specs />
                     </div>
 
                     {/* Detailed analysis */}

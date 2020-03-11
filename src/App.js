@@ -14,7 +14,7 @@ class App extends Component {
         <Layout>
           <div className={classes.App}>
             <Main />
-            {/* <Cards /> */}
+            <Cards />
           </div>
         </Layout>
       </Auxi>

@@ -9,10 +9,10 @@ const { getGoogleLinks, getImage } = require('./helper');
 
 
 
-var scrapeLinksFromGoogle = async (prod) => {
+const scrapeLinksFromGoogle = async (prod) => {
 
     const linkUrl = `https://www.google.com/search?q=${encodeURIComponent(prod)}`
-    const photoUrl = `https://www.google.co.in/search?hl=en&tbm=isch&q=${encodeURIComponent(prod)}`;
+    // const photoUrl = `https://www.google.co.in/search?hl=en&tbm=isch&q=${encodeURIComponent(prod)}`;
 
     let launchOptions = {
         headless: false,
@@ -24,7 +24,6 @@ var scrapeLinksFromGoogle = async (prod) => {
 
     let googleLinksContent = await getGoogleLinks(browser, linkUrl);
     
-    // let photoLink = await getImage(browser, photoUrl);
 
     let allLinks = [];
 
@@ -75,7 +74,7 @@ var scrapeLinksFromGoogle = async (prod) => {
 
                 if(link.indexOf('/p/') > 0){
                     specificLink['source']=name2
-                    var pid=link.slice(link.indexOf('=')+1,link.indexOf('&'));
+                    var pid=link.slice(link.indexOf('itm')+4,link.indexOf())
                     specificLink['pid']=pid;
                     flipkartLinks.push(specificLink)
                     return specificLink;
@@ -89,32 +88,21 @@ var scrapeLinksFromGoogle = async (prod) => {
 
     })
 
+    // console.log('**specificLinks** \n',specificLinks);
+
+
+    // let photoLink = await getImage(browser, photoUrl);
 
     
-    scrapeAmazon(browser,amazonLinks,prod)
-        .then( (data) => {
-            console.log(data);
-        })
-        .catch( (err) => {
-            console.log(err);
-        })
-
-    scrapeFlipkart(browser,flipkartLinks,prod)
-        .then( (data) => {
-            console.log(data);
-        })
-        .catch( (err) => {
-            console.log(err);
-        })
-    
-    
+    console.log('** HERE I"D RETURN EVERYTHING ** \n');
     return {
         scrapedLinks: specificLinks,
         // imgLink: photoLink,
+        browser,
+        amazonLinks,
+        flipkartLinks
     }
 
-
-        
 
 };
 

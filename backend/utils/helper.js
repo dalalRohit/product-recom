@@ -36,8 +36,17 @@ var getGoogleLinks = async (gBrowser, url) => {
     return content;
 }
 
+var amazonLinkFeatures=(link) => {
+    var product=link.slice(link.indexOf('.in')+4,link.indexOf('/product'));
+    var asin=link.slice(link.indexOf('ews/')+4,link.indexOf('/ref'));
 
+    return {
+        prod_name:product,
+        asin:asin
+    };
+}
 module.exports = {
     getGoogleLinks,
     getImage,
+    amazonLinkFeatures
 }
