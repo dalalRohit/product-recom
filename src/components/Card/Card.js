@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import classes from './Card.css';
+
 import amazonLink from './../../images/amazon-logo-png.png';
 import flipkartLink from './../../images/flipkart-logo.png';
 
 import {IoIosArrowDown,IoIosArrowUp} from 'react-icons/io';
 
 import Specs from './../../containers/Specs/Specs';
-// import Analysis from './../../containers/Analysis/Analysis';
+import Analysis from './../../containers/Analysis/Analysis';
 
 class Card extends Component
 {
@@ -53,8 +54,8 @@ class Card extends Component
 
                 </div>
 
+                {/* Source,Price and company logo */}
                 <div className={classes.Source}>
-                    <h4>{this.props.src ? this.props.src : "source"}</h4>
 
                     <span className={classes.Price} >Price</span>
                     
@@ -64,10 +65,12 @@ class Card extends Component
                 <br />
                 <hr />
 
+                {/* DOWN/UP Arrow  */}
                 <div className={classes.Toggle} onClick={this.handleToggle}>
                     {arrowToShow}
                 </div>
 
+                {/* Container for Specs and Info */}
                 <div className={classes.Info} style={{display:!this.state.toggle ? "none" : "block"}}>
                     {/* Specifications Table */}
                     <div className={classes.SpecsTable}>
@@ -79,7 +82,10 @@ class Card extends Component
                     {/* Detailed analysis */}
                     <main className={classes.Analysis}>
                         <h3>Analysis</h3>
+                        <Analysis />
+
                     </main>
+                
                 </div>
         </div>
 

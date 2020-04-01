@@ -17,11 +17,14 @@ const scrapeLinksFromGoogle = async (prod) => {
     let launchOptions = {
         headless: false,
         executablePath: 'C:\\Users\\dalal\\AppData\\Local\\Google\\Chrome SxS\\Application\\chrome.exe', // because we are using puppeteer-core so we must define this option
-        args: ['--start-maximized']
+        ignoreHTTPSErrors: true,
+        args: [
+          '--start-maximized',
+        ]
     };
 
     const browser = await puppeteer.launch(launchOptions);
-
+    console.log(browser);
     let googleLinksContent = await getGoogleLinks(browser, linkUrl);
     
 
@@ -88,13 +91,11 @@ const scrapeLinksFromGoogle = async (prod) => {
 
     })
 
-    // console.log('**specificLinks** \n',specificLinks);
 
 
     // let photoLink = await getImage(browser, photoUrl);
 
     
-    console.log('** HERE I"D RETURN EVERYTHING ** \n');
     return {
         scrapedLinks: specificLinks,
         // imgLink: photoLink,

@@ -1,23 +1,28 @@
 import React, { Component } from 'react';
-import classes from './App.css';
-import Auxi from './hoc/Auxi/Auxi';
-import Layout from './components/Layout/Layout';
-import Main from './containers/Main/Main';
+import styled from 'styled-components';
 
+import Main from './containers/Main/Main';
+import Header from './containers/Header/Header';
 // Testing
 import Cards from './containers/Cards/Cards';
+
+const Layout=styled.div`
+    width:100%;
+    max-width:100%;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    background-color: #eee;
+`;
 
 class App extends Component {
   render() {
     return (
-      <Auxi>
         <Layout>
-          <div className={classes.App}>
+            <Header />
             <Main />
-            <Cards />
-          </div>
+            {/* <Cards /> */}
         </Layout>
-      </Auxi>
     );
   }
 }

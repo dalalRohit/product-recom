@@ -1,3 +1,5 @@
+
+
 :root{
     /* WENGE */
     --main-navbar-color:#3c4043; ; 
@@ -10,17 +12,17 @@
     /* ROMAN SILVER */
     --secondary-color:#878C8F;
 
-    --text-font:'Montserrat', sans-serif;
-
 }
-* {
+
+*{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Raleway', Roboto;
+  font-family: 'Roboto', sans-serif;
+
 }
 
-html{
-  width: 100%;
+html,body{
   height: 100%;
+  max-width: 100%;
 }

@@ -4,8 +4,9 @@ var moment = require('moment');
 
 // Helper functions
 const { scrapeLinksFromGoogle } = require('./../utils/links');
-const {scrapeAmazon}=require('./../utils/scrapeAmazon');
-const {scrapeFlipkart}=require('./../utils/scrapeFlipkart');
+const {scrapeAmazonSingle,scrapeAmazon}=require('./../utils/scrapeAmazon');
+const {scrapeFlipkartSingle}=require('./../utils/scrapeFlipkart');
+const rohit=require('./../play/new');
 
 // Firebase config file
 const { dataRef, getAllLinks, deleteAllLinks } = require('./../utils/store');
@@ -13,12 +14,13 @@ const { dataRef, getAllLinks, deleteAllLinks } = require('./../utils/store');
 
 // POST /links
 router.post('/links', async function (req, res, next) {
+
+
     var product = String(req.body.product.trim()).toLowerCase();
 
     //--------------------GLOBAL OBJECT----------------------------------
     let allLinks = await getAllLinks() === null ? {} : await getAllLinks();
-    let amazonResult;
-    let flipkartResult;
+
 
     if (allLinks !== null) {
 
@@ -41,10 +43,11 @@ router.post('/links', async function (req, res, next) {
             //scrapped results from links.js
             // var { scrapedLinks,imgLink  } = await scrapeLinksFromGoogle(product);
             scrapeLinksFromGoogle(product)
-                .then( (response) => {
+                .then( async (response) => {
                     // console.log('**inside .then() scrapeLinksFromGOogle** \n');
-                    var {browser,scrapedLinks,amazonLinks,flipkartLinks}=response;
-                    console.log('**scrappedLinks** \n',scrapedLinks);
+                    var {scrapedLinks,browser,amazonLinks,flipkartLinks}=response;
+                    
+
                     var data = [...new Set(scrapedLinks)];
                     
                     data = data.filter((i) => {
@@ -54,44 +57,54 @@ router.post('/links', async function (req, res, next) {
                         return i;
                     })
 
-                    // if (data.length > 0) {
-                        //add new product to already saved data
-                    allLinks[product] = {
-                        data,
-                        // photo: imgLink
-                    };
+                    //add new product to already saved data
+                    allLinks[product] = {data};
                     
-                    scrapeAmazon(browser,amazonLinks,product)
-                        .then( (answer) => {
-                            console.log('** GOT SCRAPEAMAZON RESULT ** \n',answer);
-                            
-                        })
-                        .catch( (err) => {
+                    /*
+                    amazonLinks.forEach( (amazonLink) => {
+                        scrapeAmazonSingle(browser,amazonLink.link,product)
+                            .then( (response) => {
+                                console.log('\n scrapeAmazonSingle .then() => ',response);
+                                amazonRes.push(response);
+                            })
+                            .catch( (err) => {
+                                console.log(err);
+                            })
+                    })
+                    amazonRes=[{},{}]
+                    flipkartRes=[{},{}]
+                    return everything
+                    */
 
-                        })
-
-                    scrapeFlipkart(browser,flipkartLinks,product)
-                        .then( (answer) => {
-                            console.log('** GOT SCRAPEFLIPKART RESULT ** \n',answer);
-                            
-                        })
-                        .catch( (err) => {
-
-                        })
+                    // scrapeAmazon(browser,amazonLinks,product)
+                    //     .then( (amazonRes) => {
+                    //         console.log('[rest.js==77] \n',amazonRes);
+                    //         return amazonRes[0];
+                    //     })
+                    //     .then( (h) => {
+                    //         console.log('chaining promise \n ',h);
+                    //     })
                     
-                                                
-                    dataRef.child(`${product}/allLinks`).set(allLinks[product], function (err) {
-                        if (err) {
-                            return res.status(400).send('Unable to save data!')
-                        }
-                        // Send everything to react from here
-                        res.status(201).send({
-                            savedLinks:allLinks[product]
+                    rohit({'amazon':amazonLinks,'flipkart':flipkartLinks},browser,product)
+                        .then( (data) => {
+                            console.log(data);
+                            dataRef.child(`${product}/allLinks`).set(allLinks[product], function (err) {
+                                if (err) {
+                                    return res.status(400).send('Unable to save data!')
+                                }
+                              
+                                // Send everything to react from here
+                                return res.status(201).send({
+                                    savedLinks:allLinks[product],
+                                    info:data
+                                })
                         })
-                        
-                    });
-                                        
-                    // }
+
+            
+
+                      
+
+                    });    
 
                 })
                 .catch( (err) => {
@@ -99,6 +112,8 @@ router.post('/links', async function (req, res, next) {
                 })
         
         }
+
+        
 
         
     }
@@ -150,6 +165,13 @@ router.post('/get_features',(req,res,next) => {
         amazonFeatures,
         flipkartFeatures
     })
+})
+
+router.post('/timepass',(req,res) => {
+    let data=req.body.data;
+    setTimeout( () => {
+        res.send({ans:data**data});
+    },2000);
 })
 module.exports = router;
 

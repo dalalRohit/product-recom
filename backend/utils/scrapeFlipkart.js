@@ -65,9 +65,9 @@ const scrapeFlipkart = async (browser, flipkartLinks, product) => {
         
 
         // var res = await axios.post(restapi + '/scrape-flipkartAPI', { link: allReviewsLink });
-       
+        
         // data['modelOp']=res.data;
-       
+        
 
         await prodPage.close();
         dataRef.child(`${product}/info/flipkart`).push(data ,function (err) {
@@ -77,11 +77,63 @@ const scrapeFlipkart = async (browser, flipkartLinks, product) => {
         return data;
     })
 
+    return flipkartAllReviews;
+    
+}
 
+
+// New method with promises
+const scrapeFlipkartSingle=(browser,link,product) => {
+    let flipkartBrowser=browser;
+
+    let newPromise=new Promise(async (resolve,reject) => {
+        var data={};
+
+        var prodPage = await flipkartBrowser.newPage();
+
+        improvePuppy(prodPage);
+
+        await prodPage.goto(link, { waitUntil: 'domcontentloaded' });
+        prodPage.once('load', () => console.log('Flipkart product link opened..!'));
+        
+        let prodContent = await prodPage.content();
+        var $ = cheerio.load(prodContent);
+
+        await prodPage.waitFor('._2aFisS ');
+        var allReviewsLink = 'https://www.flipkart.com'+$('._2aFisS + a').attr('href');
+        var allReviewsText = $('.swINJg._3nrCtb').text();
+
+
+        var { features,image,price } = flipkartProdSpecs($);
+
+        data['features']=features;
+        data['price']=price;
+        // data['image']=image;
+        data['allReviews']=[];
+
+        
+
+        // var res = await axios.post(restapi + '/scrape-flipkartAPI', { link: allReviewsLink });
+        
+        // data['modelOp']=res.data;
+        
+
+        await prodPage.close();
+        dataRef.child(`${product}/info/flipkart`).push(data ,function (err) {
+            if(err) return err;
+        });
+
+        resolve(data);
+
+        // await prodPage.close();
+    })
+
+    return newPromise;
 
 }
 
 
 module.exports = {
-    scrapeFlipkart
+    scrapeFlipkart:scrapeFlipkart,
+    scrapeFlipkartSingle:scrapeFlipkartSingle
 }

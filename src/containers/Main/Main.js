@@ -18,7 +18,9 @@ class Main extends Component {
         savedLinks: {},
         error: false,
         errorMsg: '',
-        savedProds: []
+        savedProds: [],
+        amazonFeatures:[],
+        flipkartFeatures:[]
     }
 
     // Helper functions =====================>START
@@ -78,9 +80,7 @@ class Main extends Component {
     // onFormSbumitHandler
     handleForm = (event) => {
         event.preventDefault();
-        
- 
-        
+         
         const { product, savedProds, savedLinks } = this.state;
         this.setState({
             spinner: true,
@@ -90,18 +90,21 @@ class Main extends Component {
 
         axios.post('/rest/links', { product })
             .then(async (res) => {
-                console.log('--------Main.js------- 97 \n',res.data)
-                console.log('--------Main.js------- 92 \n',res.data.msg);
+                // console.log('--------Main.js------- 97 \n',res.data)
+                // console.log('--------Main.js------- 92 \n',res.data.msg);
+                console.log('--------Main.js---------- info \n',res.data.info)
                 this.setState({
                     links: res.data.savedLinks,
                     spinner: false,
                     searching: false,
+                    amazonFeatures:res.data.info['amazon']['features'],
+                    flipkartFeatures:res.data.info['flipkart']['features']
                 })
 
             })
             .catch((err) => {
                 this.setState({ error: true, spinner: false, searching: false })
-                console.error(err);
+                return console.error(err);
             })
 
     }
@@ -118,7 +121,7 @@ class Main extends Component {
             <div className={classes.Main}>
                 <h3>Make sure you have strong internet connection!</h3>
                 
-                {/* HELPER CODE */}
+                {/* START ==============>HELPER CODE */}
                 <button onClick={this.showAllLinks}>Show all links</button>
 
                 {savedProds.length > 0 ? savedProds.map((prod) => {
@@ -126,8 +129,7 @@ class Main extends Component {
                 }) : null}
 
                 <button onClick={this.deleteLinks}>Delete all </button>
-                {/* HELPER CODE */}
-
+                {/* END ==============>HELPER CODE */}
                 <Form
                     product={product}
                     inputChange={this.handleInputChange}
@@ -151,7 +153,6 @@ class Main extends Component {
                     )
                 }) : null}
 
-                {/* <Card /> */}
             </div>
         )
     }
