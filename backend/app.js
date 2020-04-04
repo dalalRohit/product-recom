@@ -7,10 +7,12 @@ var logger = require('morgan');
 const cors = require('cors')
 var compression = require('compression')
 var helmet = require('helmet')
+var {mongoose}=require('./db/db');
 
 
 var restRouter = require('./routes/rest');
 var app = express();
+app.use('/public', express.static(path.join(__dirname, './public')));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

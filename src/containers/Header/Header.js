@@ -18,7 +18,7 @@ class Header extends Component {
     }
     render() {
         return (
-            <Auxi>
+            <>
                 <Sidenav
                     click={this.handleSideNav}
                     show={this.state.show} />
@@ -30,7 +30,7 @@ class Header extends Component {
                     <Logo />
                     <Nav />
                 </div>
-            </Auxi>
+            </>
         )
     }
 }
