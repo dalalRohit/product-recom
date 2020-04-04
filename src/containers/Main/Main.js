@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import classes from './Main.css';
 import axios from 'axios';
-import uuid from 'uuid/v4';
 
 // Image
 import productImg from './../../images/product.jpg';
@@ -10,7 +9,7 @@ import productImg from './../../images/product.jpg';
 import Spinner from './../../components/UI/Spinner/Spinner';
 import Form from './../../components/Form/Form';
 import Card from './../../components/Card/Card'
-import Error from './../../components/UI/Error/Error';
+import Cards from './../Cards/Cards';
 
 class Main extends Component {
 
@@ -153,6 +152,10 @@ class Main extends Component {
                 
 
                 <div className={classes.Cards}>
+                    <div>
+                        <Cards />
+                    </div>
+                    {/*  
                     {links.length > 0 ? links.map((data) => {
                         console.log(data);
                         return (
@@ -165,9 +168,11 @@ class Main extends Component {
                                 src={data.source}
                                 features={data.features}
                                 price={data.price}
+                                prediction={data.prediction}
                             />
                         )
                     }) : null}
+                    */}
                 </div>
 
             </div>

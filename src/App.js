@@ -33,10 +33,8 @@ class App extends Component {
         <Layout>
             <Header />
             <Main />
-            {/* <Cards /> */}
-            <Footer>
-                Footer
-            </Footer>
+            {/* <Cards />  */}
+            {/* <Footer>Footer</Footer> */}
         </Layout>
     );
   }

@@ -4,9 +4,7 @@ var moment = require('moment');
 
 // Helper functions
 const { scrapeLinksFromGoogle } = require('./../utils/links');
-const {scrapeAmazonSingle,scrapeAmazon}=require('./../utils/scrapeAmazon');
-const {scrapeFlipkartSingle}=require('./../utils/scrapeFlipkart');
-const {rohit,shraddha}=require('./../play/new');
+const {amazonMethod,flipkartMethod}=require('./../play/new');
 
 // Firebase config file
 const { dataRef, getAllLinks, deleteAllLinks } = require('./../utils/store');
@@ -15,7 +13,6 @@ const { dataRef, getAllLinks, deleteAllLinks } = require('./../utils/store');
 // POST /links
 router.post('/links', async function (req, res, next) {
 
-    var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     var product = String(req.body.product.trim()).toLowerCase();
     //--------------------GLOBAL OBJECT----------------------------------
     let allLinks = await getAllLinks() === null ? {} : await getAllLinks();
@@ -40,65 +37,25 @@ router.post('/links', async function (req, res, next) {
         else{
 
             //scrapped results from links.js
-            // var { scrapedLinks,imgLink  } = await scrapeLinksFromGoogle(product);
             scrapeLinksFromGoogle(product)
                 .then( async (response) => {
                     var {scrapedLinks,browser}=response;
 
-
-
-                    // var data = [...new Set(scrapedLinks)];
-                    
-                    // data = data.filter((i) => {
-                    //     // i['photoUrl'] = imgLink;
-                    //     i['timestamp'] = moment().format('MMMM Do YYYY, h:mm:ss a');
-                    //     i['used'] = 1;
-                    //     return i;
-                    // })
-
-                    // //add new product to already saved data
-                    // allLinks[product] = {data};
    
                     let amazonLinks=scrapedLinks['amazon'];
                     let flipkartLinks=scrapedLinks['flipkart'];
 
-                    let rohitData=await rohit(amazonLinks,browser,product);
-                    rohitData['amazon'].forEach( (aLink) => {
+                    let amazonData=await amazonMethod(amazonLinks,browser,product);
+                    amazonData['amazon'].forEach( (aLink) => {
                         dataRef.child(`${product}/amazon`).push(aLink, function (err) {
                             if (err) {
                                 return res.status(400).send('Unable to save data!')
                             }
                         })
                     })
-                    /*
-                        .then( (data) => {
-                            console.log(data);
-                            amazonLinks.forEach( (amazonLink,i) => {
-                                amazonLink['features']=data['amazon'][i].features
-                                amazonLink['price']=data['amazon'][i].price
-                                // console.log(amazonLink);
-                                dataRef.child(`${product}/amazon`).push(amazonLink, function (err) {
-                                    if (err) {
-                                        return res.status(400).send('Unable to save data!')
-                                    }
-                                })
-                            })
-
-                            // Send everything to react from here
-                            // return res.status(201).send({
-                            //     savedLinks:{
-                            //         'amazon':amazonLinks,
-                            //         'flipkart':flipkartLinks
-                            //     },
-                            //     info:data
-                            // })
-                        })
-                        .catch( (err) => {
-                            console.log(err);
-                        });   
-                    */
-                    let shraddhaData=await shraddha(flipkartLinks,browser,product);
-                    shraddhaData['flipkart'].forEach( (fLink) => {
+ 
+                    let flipkartData=await flipkartMethod(flipkartLinks,browser,product);
+                    flipkartData['flipkart'].forEach( (fLink) => {
                         dataRef.child(`${product}/flipkart`).push(fLink,function (err) {
                             if(err){
                                 return res.status(400).send('Unable to save data!')
@@ -108,17 +65,20 @@ router.post('/links', async function (req, res, next) {
                     amazonLinks=amazonLinks.map( (aLink,i) => {
                         return {
                             ...aLink,
-                            features:rohitData['amazon'][i]['features'],
-                            price:rohitData['amazon'][i]['price']
+                            features:amazonData['amazon'][i]['features'],
+                            price:amazonData['amazon'][i]['price'],
+                            prediction:amazonData['amazon'][i]['prediction']
                         }
                     })
                     flipkartLinks=flipkartLinks.map( (fLink,i) => {
                         return {
                             ...fLink,
-                            features:shraddhaData['flipkart'][i]['features'],
-                            price:shraddhaData['flipkart'][i]['price']
+                            features:flipkartData['flipkart'][i]['features'],
+                            price:flipkartData['flipkart'][i]['price']
                         }
                     })
+
+                    // Return everything from here---->
                     res.status(200).send({
                         savedLinks:{
                             'amazon':amazonLinks,
@@ -126,41 +86,15 @@ router.post('/links', async function (req, res, next) {
                         }
                     })
 
-                    /*
-                    shraddha(allLinks,browser,product)
-                        .then( (data) => {
-                            console.log(data);
-                            flipkartLinks.forEach( (flipkartLink,i) => {
-                                flipkartLink['features']=data['flipkart'][i].features
-                                flipkartLink['price']=data['flipkart'][i].price;
-                                // console.log(flipkartLink);
-                                dataRef.child(`${product}/flipkart`).push(flipkartLink,function (err) {
-                                    if(err){
-                                        return res.status(400).send('Unable to save data!')
-                                    }
-                                })
-                            })
-                        })
-                        .catch( (err) => {
-
-                        })
-                        */
+                    await browser.close();
 
                 })
                 .catch( (err) => {
                     return console.log(err)
                 })
         
-        }
-
-        
-
-        
+        }   
     }
-
-    
-
-
 });
 
 

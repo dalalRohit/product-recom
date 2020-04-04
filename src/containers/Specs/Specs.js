@@ -42,7 +42,7 @@ export default class Specs extends Component {
                         {
                             features.map( (r) => {
                                 return (
-                                    <tr>
+                                    <tr key={Math.random()}>
                                         <td>{r.label}</td>
                                         <td>{r.value}</td>
                                     </tr>

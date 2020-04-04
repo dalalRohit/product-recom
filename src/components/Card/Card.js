@@ -26,7 +26,7 @@ class Card extends Component
     }
 
     render(){
-        let {imgLink,price,product,src,link,title,features}=this.props;
+        let {imgLink,price,product,src,link,title,features,prediction}=this.props;
 
         var logoLink = src === "amazon" ? amazonLink : flipkartLink;
 
@@ -58,7 +58,7 @@ class Card extends Component
                             <Circle 
                                 animate={true}
                                 progressColor="rgb(51,255,153)"
-                                progress={45} />
+                                progress={prediction} />
                         </div>
                     </div>
 
@@ -99,6 +99,7 @@ class Card extends Component
                     </main>
                 
                 </div>
+            
             </div>
 
         )
