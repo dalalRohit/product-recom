@@ -5,9 +5,12 @@ import amazonLink from './../../images/amazon-logo-png.png';
 import flipkartLink from './../../images/flipkart-logo.png';
 
 import {IoIosArrowDown,IoIosArrowUp} from 'react-icons/io';
+import Circle from 'react-circle';
 
 import Specs from './../../containers/Specs/Specs';
 import Analysis from './../../containers/Analysis/Analysis';
+
+import productImg from './../../images/product.jpg';
 
 class Card extends Component
 {
@@ -23,7 +26,9 @@ class Card extends Component
     }
 
     render(){
-        var logoLink = this.props.src === "amazon" ? amazonLink : flipkartLink;
+        let {imgLink,price,product,src,link,title,features}=this.props;
+
+        var logoLink = src === "amazon" ? amazonLink : flipkartLink;
 
         let arrowToShow=!this.state.toggle ? <IoIosArrowDown size={25} /> : <IoIosArrowUp size={25} />
 
@@ -33,22 +38,27 @@ class Card extends Component
                 <div className={classes.MainCard}>
 
                     <div className={classes.ProdImg}>
-                        <h5>Product Image</h5>
                         <img
-                            alt={`This is visual of ${this.props.product}`}
-                            title={`This is visual of ${this.props.product}`}
-                            src={this.props.imgLink}
+                            alt={`This is visual of ${product}`}
+                            title={`This is visual of ${product}`}
+                            src={imgLink}
                             className={classes.Img}
-                            width="171px"
-                            height="180px" />
+                            />
                     </div>
 
                     <div className={classes.Desc}>
                         <div className={classes.ProdTitle}>
                             <a
-                                href={this.props.link}
+                                href={link}
                                 rel="noopener noreferrer"
-                                target="_blank">{this.props.title ? this.props.title : "Title"}</a>
+                                target="_blank">{title ? title : "Title"}</a>
+                        </div>
+                        <div className={classes.Short}>
+                            <p>Result</p>
+                            <Circle 
+                                animate={true}
+                                progressColor="rgb(51,255,153)"
+                                progress={45} />
                         </div>
                     </div>
 
@@ -57,9 +67,9 @@ class Card extends Component
                 {/* Source,Price and company logo */}
                 <div className={classes.Source}>
 
-                    <span className={classes.Price} >Price</span>
+                    <span className={classes.Price} >{price ? price : 'price'}</span>
                     
-                    <img src={logoLink} width="40px" height="40px" />
+                    <img src={logoLink} alt="Logo" width="40px" height="40px" />
                 </div>
 
                 <br />
@@ -71,12 +81,14 @@ class Card extends Component
                 </div>
 
                 {/* Container for Specs and Info */}
-                <div className={classes.Info} style={{display:!this.state.toggle ? "none" : "block"}}>
+                <div className={classes.Info} 
+                    style={{display:!this.state.toggle ? "none" : "block"}}
+                    >
                     {/* Specifications Table */}
                     <div className={classes.SpecsTable}>
                         <h3>Specifications</h3>
 
-                        <Specs />
+                        <Specs features={features ? features : null}/>
                     </div>
 
                     {/* Detailed analysis */}
@@ -87,7 +99,7 @@ class Card extends Component
                     </main>
                 
                 </div>
-        </div>
+            </div>
 
         )
     }

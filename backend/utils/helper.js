@@ -1,7 +1,7 @@
 const cheerio=require('cheerio');
 const { scrapeAmazon } = require('./scrapeAmazon');
 const { scrapeFlipkart } = require('./scrapeFlipkart');
-
+const puppeteer=require('puppeteer-core');
 const {presets}=require('./presets');
 const {improvePuppy}=require('./puppy');
 
@@ -28,12 +28,24 @@ var getImage = async (pBrowser, url) => {
 var getGoogleLinks = async (gBrowser, url) => {
     //TO SCRAPE GOOGLE LINKS
     var linkPage = await gBrowser.newPage();
+
+    try{
+        await linkPage.goto(url, { waitUntil: 'domcontentloaded' });
+    }
+    catch(e) {
+        if(e instanceof puppeteer.errors.TimeoutError){
+            return {
+                error:'Cannot open page. Try once again :('
+            }
+        }
+
+    }
     improvePuppy(linkPage);
-    await linkPage.goto(url, { waitUntil: 'domcontentloaded' });
     linkPage.once('load', () => console.log('Product searched on Google..!'));
     let content = await linkPage.content();
     await linkPage.close();
     return content;
+
 }
 
 var amazonLinkFeatures=(link) => {

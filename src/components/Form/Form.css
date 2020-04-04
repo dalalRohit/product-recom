@@ -2,6 +2,7 @@
 .Form{
     background-color: aliceblue;
     width: 50%;
+    height: 100%;
     padding: 20px;
     max-width: 100%;
     box-sizing: border-box;

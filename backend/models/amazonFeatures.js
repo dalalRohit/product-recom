@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 var AmazonFeaturesSchema = new mongoose.Schema({
     name:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
     date:{
         type:String,
@@ -14,7 +15,7 @@ var AmazonFeaturesSchema = new mongoose.Schema({
     },
     price:{
         type:String
-    }
+    },
 });
 
 var AmazonFeatures = mongoose.model('AmazonFeatures', AmazonFeaturesSchema);

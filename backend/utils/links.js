@@ -18,13 +18,13 @@ const scrapeLinksFromGoogle = async (prod) => {
         headless: false,
         executablePath: 'C:\\Users\\dalal\\AppData\\Local\\Google\\Chrome SxS\\Application\\chrome.exe', // because we are using puppeteer-core so we must define this option
         ignoreHTTPSErrors: true,
+        waitUntil: 'networkidle',
         args: [
           '--start-maximized',
         ]
     };
+    let browser = await puppeteer.launch(launchOptions);
 
-    const browser = await puppeteer.launch(launchOptions);
-    console.log(browser);
     let googleLinksContent = await getGoogleLinks(browser, linkUrl);
     
 
@@ -97,11 +97,12 @@ const scrapeLinksFromGoogle = async (prod) => {
 
     
     return {
-        scrapedLinks: specificLinks,
+        scrapedLinks: {
+            'amazon':amazonLinks,
+            'flipkart':flipkartLinks
+        },
         // imgLink: photoLink,
         browser,
-        amazonLinks,
-        flipkartLinks
     }
 
 

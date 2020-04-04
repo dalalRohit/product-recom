@@ -4,5 +4,10 @@
     margin: 0;;
     padding: 0.3rem;
     box-sizing: border-box;
+    background-color: aliceblue;
+    padding:1em;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(1fr,1fr));
+    gap:.5em;
 
 }

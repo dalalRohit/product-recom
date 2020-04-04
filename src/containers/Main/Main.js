@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import classes from './Main.css';
 import axios from 'axios';
+import uuid from 'uuid/v4';
+
+// Image
+import productImg from './../../images/product.jpg';
 
 
 import Spinner from './../../components/UI/Spinner/Spinner';
@@ -58,7 +62,7 @@ class Main extends Component {
             let prods = Object.keys(data).map((prod) => {
                 return prod.trim();
             });
-            if (prods.length == 0) alert('No products to show')
+            if (prods.length === 0) alert('No products to show')
             else {
                 this.setState({
                     savedProds: prods
@@ -92,13 +96,19 @@ class Main extends Component {
             .then(async (res) => {
                 // console.log('--------Main.js------- 97 \n',res.data)
                 // console.log('--------Main.js------- 92 \n',res.data.msg);
-                console.log('--------Main.js---------- info \n',res.data.info)
+                console.log('--------Main.js---------- info \n',res.data)
+                let x=[];
+                Object.keys(res.data.savedLinks)
+                    .map( (k) => {
+                        res.data.savedLinks[k].map( (e) => {
+                            x.push(e);
+                        })
+                    })
+                console.log(x);
                 this.setState({
-                    links: res.data.savedLinks,
+                    links: x,
                     spinner: false,
                     searching: false,
-                    amazonFeatures:res.data.info['amazon']['features'],
-                    flipkartFeatures:res.data.info['flipkart']['features']
                 })
 
             })
@@ -119,7 +129,7 @@ class Main extends Component {
         return (
 
             <div className={classes.Main}>
-                <h3>Make sure you have strong internet connection!</h3>
+                <p>Make sure you have strong internet connection!</p>
                 
                 {/* START ==============>HELPER CODE */}
                 <button onClick={this.showAllLinks}>Show all links</button>
@@ -130,28 +140,35 @@ class Main extends Component {
 
                 <button onClick={this.deleteLinks}>Delete all </button>
                 {/* END ==============>HELPER CODE */}
+                
                 <Form
                     product={product}
                     inputChange={this.handleInputChange}
                     formSubmit={(event) => this.handleForm(event)}
                     searching={searching} />
+                    
+                <div className={classes.Spinner}>
+                    {spinner ? <Spinner /> : null}
+                </div>
+                
 
-                {spinner ? <Spinner /> : null}
-
-                {error ? <Error msg={this.state.errorMsg} /> : null}
-
-                {links.data ? links.data.map((data) => {
-                    return (
-                        <Card
-                            product={this.state.product}
-                            key={Math.random()}
-                            title={data.title}
-                            link={data.link}
-                            // imgLink={photo}
-                            src={data.source}
-                        />
-                    )
-                }) : null}
+                <div className={classes.Cards}>
+                    {links.length > 0 ? links.map((data) => {
+                        console.log(data);
+                        return (
+                            <Card
+                                product={this.state.product}
+                                key={Math.random()}
+                                title={data.title}
+                                link={data.link}
+                                imgLink={data.image  ? data.image : productImg}
+                                src={data.source}
+                                features={data.features}
+                                price={data.price}
+                            />
+                        )
+                    }) : null}
+                </div>
 
             </div>
         )

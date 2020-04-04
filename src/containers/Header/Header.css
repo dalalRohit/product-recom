@@ -3,7 +3,7 @@
     max-width: 100%;
     box-sizing: border-box;
     /* border: 1px solid black; */
-    height: 7vh;
+    height: 8vh;
     display: flex;
     flex-flow: row;
     justify-content: space-between;

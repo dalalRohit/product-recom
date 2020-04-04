@@ -1,7 +1,6 @@
 .Card{
-    width: 70%;
+    width: 100%;
     max-width: 100%;
-    margin: 10px 15% 10px 15%;
     border: 1px solid darkgrey;
     box-sizing: border-box;
     padding: 10px;
@@ -23,12 +22,21 @@ a:hover{
     align-items: center;
 }
 .ProdImg{
-    width: 30%;
-    height: 180px;
+    width: 40%;
+    height: 250px;
     max-width: 100%;
-    border: 1px solid red;
     box-sizing: border-box;
     padding: 10px;
+}
+.ProdImg img{
+    width: 100%;
+    height: 100%;
+}
+.Price{
+    border:1px solid plum;
+    padding:.5rem;
+    width: 30%;
+    text-align: center;
 }
 .TechDesc{
     border: 1px solid red;
@@ -38,6 +46,15 @@ a:hover{
 }
 .TechDesc ul li{
     list-style-type: decimal;
+}
+
+.Short{
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid plum;
+    box-sizing: border-box;
+    text-align: center;
+    margin-top: 45px;
 }
 @media(max-width:699px){
     .TechDesc{
@@ -106,27 +123,25 @@ a:hover{
         display: flex;
         flex-flow: column;
     }
-    .ProdImg{
+    .ProdImg {
+        width: 100%;
+        height: 100%;
+    }
+    /* .ProdImg{
         width: 100%;
         text-align: center;
         border-right: none;
         border-bottom: 1px solid black;
-    }
-    .Img{
-        width: 80%;
-        margin: 0 10% 0 10%;
-    }
+    } */
+
 }
 
 @media(max-width:900px){
-   .ProdImg{
+   /* .ProdImg{
         width: 100%;
         text-align: center;
         border-right: none;
         border-bottom: 1px solid black;
-    }
-    .Img{
-        width: 80%;
-        margin: 0 10% 0 10%;
-    }
+    } */
+
 }
