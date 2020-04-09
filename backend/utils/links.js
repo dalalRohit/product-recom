@@ -1,9 +1,5 @@
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 var cheerio = require('cheerio');
-
-const { scrapeAmazon } = require('./scrapeAmazon');
-const { scrapeFlipkart } = require('./scrapeFlipkart');
-// const Reviews = require('./../models/reviews');
 
 const { getGoogleLinks, getImage } = require('./helper');
 
@@ -12,17 +8,17 @@ const { getGoogleLinks, getImage } = require('./helper');
 const scrapeLinksFromGoogle = async (prod) => {
 
     const linkUrl = `https://www.google.com/search?q=${encodeURIComponent(prod)}`
-    // const photoUrl = `https://www.google.co.in/search?hl=en&tbm=isch&q=${encodeURIComponent(prod)}`;
 
     let launchOptions = {
         headless: false,
-        executablePath: 'C:\\Users\\dalal\\AppData\\Local\\Google\\Chrome SxS\\Application\\chrome.exe', // because we are using puppeteer-core so we must define this option
+        // executablePath: 'C:\\Users\\dalal\\AppData\\Local\\Google\\Chrome SxS\\Application\\chrome.exe', // because we are using puppeteer-core so we must define this option
         ignoreHTTPSErrors: true,
         waitUntil: 'networkidle',
         args: [
           '--start-maximized',
         ]
     };
+
     let browser = await puppeteer.launch(launchOptions);
 
     let googleLinksContent = await getGoogleLinks(browser, linkUrl);
@@ -50,7 +46,7 @@ const scrapeLinksFromGoogle = async (prod) => {
     let flipkartLinks=[];
 
     // Filter amazon and flipkart links from all links
-    var specificLinks = allLinks.filter( (specificLink) => {
+    allLinks.filter( (specificLink) => {
         //specificLink={link:'',title:''}
 
         var link = String(specificLink.link.trim());
@@ -90,10 +86,6 @@ const scrapeLinksFromGoogle = async (prod) => {
         }
 
     })
-
-
-
-    // let photoLink = await getImage(browser, photoUrl);
 
     
     return {

@@ -26,14 +26,14 @@ class Card extends Component
     }
 
     render(){
-        let {imgLink,price,product,src,link,title,features,prediction}=this.props;
+        let {imgLink,price,product,src,link,title,features,prediction,winner}=this.props;
 
         var logoLink = src === "amazon" ? amazonLink : flipkartLink;
 
         let arrowToShow=!this.state.toggle ? <IoIosArrowDown size={25} /> : <IoIosArrowUp size={25} />
 
         return (
-            <div className={classes.Card}>
+            <div className={classes.Card} style={{border:winner ? '3px solid green' : '3px solid red'}}>
 
                 <div className={classes.MainCard}>
 
@@ -58,7 +58,7 @@ class Card extends Component
                             <Circle 
                                 animate={true}
                                 progressColor="rgb(51,255,153)"
-                                progress={prediction} />
+                                progress={Math.round(prediction)} />
                         </div>
                     </div>
 
@@ -82,8 +82,8 @@ class Card extends Component
 
                 {/* Container for Specs and Info */}
                 <div className={classes.Info} 
-                    style={{display:!this.state.toggle ? "none" : "block"}}
-                    >
+                    style={{display:!this.state.toggle ? "none" : "grid"}} >
+
                     {/* Specifications Table */}
                     <div className={classes.SpecsTable}>
                         <h3>Specifications</h3>

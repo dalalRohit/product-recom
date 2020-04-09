@@ -1,7 +1,7 @@
 const cheerio=require('cheerio');
 const { scrapeAmazon } = require('./scrapeAmazon');
 const { scrapeFlipkart } = require('./scrapeFlipkart');
-const puppeteer=require('puppeteer-core');
+const puppeteer=require('puppeteer');
 const {presets}=require('./presets');
 const {improvePuppy}=require('./puppy');
 
