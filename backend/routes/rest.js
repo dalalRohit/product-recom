@@ -1,10 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var moment = require('moment');
 
 // Helper functions
 const { scrapeLinksFromGoogle } = require('./../utils/links');
-const {amazonMethod,flipkartMethod}=require('./../play/new');
+const {amazonMethod,flipkartMethod}=require('./../utils/final');
 
 // Firebase config file
 const { dataRef, getAllLinks, deleteAllLinks } = require('./../utils/store');
@@ -17,20 +16,31 @@ router.post('/links', async function (req, res, next) {
     //--------------------GLOBAL OBJECT----------------------------------
     let allLinks = await getAllLinks() === null ? {} : await getAllLinks();
 
-
     if (allLinks !== null) {
 
         //if product is already there in FIREBASE
         if (product in allLinks) {
 
             //update timestamp to latest used and update used count
-            allLinks[product].data.map((prod) => {
-                prod['timestamp'] = moment().format('MMMM Do YYYY, h:mm:ss a');;
-                prod['used'] += 1;
-                //update firebase with new timestamp and used count of product
-                dataRef.child(product).set(allLinks[product]);
+            let dataToSend={'amazon':[],'flipkart':[]};
+            Object.keys(allLinks[product].amazon)
+                .map( (savedLink) => {
+                    dataToSend['amazon'].push(allLinks[product].amazon[savedLink])
+                })
+            Object.keys(allLinks[product].flipkart)
+                .map( (savedLink) => {
+                    dataToSend['flipkart'].push(allLinks[product].flipkart[savedLink])
+                })
+            // dataToSend['amazon']=allLinks[product].amazon;
+            // dataToSend['flipkart']=allLinks[product].flipkart;
+
+            console.log('chutya \n',dataToSend);
+            return res.status(201).send({
+                savedLinks:{
+                    'amazon':dataToSend['amazon'],
+                    'flipkart':dataToSend['flipkart']
+                }
             })
-            return res.send(allLinks[product]);
         }
 
         //if product entered for FIRST TIME
@@ -45,37 +55,43 @@ router.post('/links', async function (req, res, next) {
                     let amazonLinks=scrapedLinks['amazon'];
                     let flipkartLinks=scrapedLinks['flipkart'];
 
-                    let amazonData=await amazonMethod(amazonLinks,browser,product);
-                    amazonData['amazon'].forEach( (aLink) => {
+                    let {amazonData}=await amazonMethod(amazonLinks,browser,product);
+                    console.log('------------------Printing amazonData------------ \n',amazonData);
+                    amazonLinks=amazonLinks.map( (aLink,i) => {
+                        aLink={
+                            ...aLink,
+                            'features':amazonData[i].features,
+                            'price':amazonData[i].price,
+                            'prediction':amazonData[i]['prediction'] ? amazonData[i]['prediction'] : 0 ,
+                            'image':amazonData[i]['image']
+                        }
                         dataRef.child(`${product}/amazon`).push(aLink, function (err) {
                             if (err) {
                                 return res.status(400).send('Unable to save data!')
                             }
                         })
+                        return aLink;
+
                     })
+
  
-                    let flipkartData=await flipkartMethod(flipkartLinks,browser,product);
-                    flipkartData['flipkart'].forEach( (fLink) => {
-                        dataRef.child(`${product}/flipkart`).push(fLink,function (err) {
-                            if(err){
+                    let {flipkartData}=await flipkartMethod(flipkartLinks,browser,product);
+                    console.log('------------------Printing flipkartData------------ \n',flipkartData);
+                    flipkartLinks=flipkartLinks.map( (fLink,i) => {
+                        fLink={
+                            ...fLink,
+                            'features':flipkartData[i]['features'],
+                            'price':flipkartData[i]['price'],
+                            'prediction':flipkartData[i]['prediction'] ? flipkartData[i]['prediction'] : 0,
+                            'image':flipkartData[i]['image'] ?  flipkartData[i]['image'] : 'image'
+
+                        }
+                        dataRef.child(`${product}/flipkart`).push(fLink, function (err) {
+                            if (err) {
                                 return res.status(400).send('Unable to save data!')
                             }
                         })
-                    })
-                    amazonLinks=amazonLinks.map( (aLink,i) => {
-                        return {
-                            ...aLink,
-                            features:amazonData['amazon'][i]['features'],
-                            price:amazonData['amazon'][i]['price'],
-                            prediction:amazonData['amazon'][i]['prediction']
-                        }
-                    })
-                    flipkartLinks=flipkartLinks.map( (fLink,i) => {
-                        return {
-                            ...fLink,
-                            features:flipkartData['flipkart'][i]['features'],
-                            price:flipkartData['flipkart'][i]['price']
-                        }
+                        return fLink;
                     })
 
                     // Return everything from here---->
@@ -97,25 +113,6 @@ router.post('/links', async function (req, res, next) {
     }
 });
 
-
-// Helper functions =====================>START
-router.get('/delete_links', (req, res, next) => {
-    deleteAllLinks().then((ans) => {
-        console.log('All links deleted succesfully ;) ', ans);
-        res.send({
-            msg:'All links deleted succesfully ;) ',
-            ans
-        }) 
-    })
-})
-
-router.get('/get_links', (req, res, next) => {
-    getAllLinks().then((ans) => {
-        res.send(ans);
-    })
-})
-
-// Helper functions =====================>END
 
 
 router.post('/get_features',(req,res,next) => {
@@ -141,12 +138,10 @@ router.post('/get_features',(req,res,next) => {
     })
 })
 
-router.post('/timepass',(req,res) => {
-    let data=req.body.data;
-    setTimeout( () => {
-        res.send({ans:data**data});
-    },2000);
+router.get('/photo',(req,res) => {
+
 })
+
 module.exports = router;
 
 

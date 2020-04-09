@@ -18,59 +18,12 @@ class Main extends Component {
         searching: false,
         spinner: false,
         links: [],
-        savedLinks: {},
         error: false,
         errorMsg: '',
-        savedProds: [],
-        amazonFeatures:[],
-        flipkartFeatures:[]
+        maxPrediction:0,
+        predictions:null
     }
 
-    // Helper functions =====================>START
-    componentDidMount = () => {
-        axios.get('/rest/get_links').then((res) => {
-            console.log('----------Main.js--------- 27 \n',res.data);
-            let result = { ...res.data };
-            let currProdsArray = Object.keys(result).map((prod) => {
-                return prod
-            })
-
-            this.setState({
-                savedLinks: result,
-                savedProds: currProdsArray
-            })
-        })
-
-    }
-
-    // Delete all links from firebase
-    deleteLinks = () => {
-        axios.get('/rest/delete_links').then((res) => {
-            alert(res.data);
-            this.setState({
-                savedProds: [],
-                savedLinks: {}
-            })
-        })
-    }
-
-    // Show all product names from firebase
-    showAllLinks = () => {
-        axios.get('/rest/show_links').then((res) => {
-            let data = { ...res.data };
-            let prods = Object.keys(data).map((prod) => {
-                return prod.trim();
-            });
-            if (prods.length === 0) alert('No products to show')
-            else {
-                this.setState({
-                    savedProds: prods
-                })
-            }
-
-        })
-    }
-    // Helper functions ======================>END
 
 
 
@@ -78,13 +31,11 @@ class Main extends Component {
         this.setState({ product: event.target.value })
     }
 
-
-
     // onFormSbumitHandler
     handleForm = (event) => {
         event.preventDefault();
          
-        const { product, savedProds, savedLinks } = this.state;
+        const { product } = this.state;
         this.setState({
             spinner: true,
             searching: true,
@@ -95,25 +46,31 @@ class Main extends Component {
             .then(async (res) => {
                 // console.log('--------Main.js------- 97 \n',res.data)
                 // console.log('--------Main.js------- 92 \n',res.data.msg);
-                console.log('--------Main.js---------- info \n',res.data)
+                console.log('--------Main.js---------- res.data \n',res.data)
                 let x=[];
+                let prediction=0;
                 Object.keys(res.data.savedLinks)
                     .map( (k) => {
                         res.data.savedLinks[k].map( (e) => {
                             x.push(e);
+                            if(Number(e['prediction']) > prediction){
+                                prediction=Number(e['prediction']);
+                            }
+
                         })
                     })
-                console.log(x);
+                
                 this.setState({
                     links: x,
                     spinner: false,
                     searching: false,
+                    maxPrediction:prediction,
                 })
 
             })
             .catch((err) => {
                 this.setState({ error: true, spinner: false, searching: false })
-                return console.error(err);
+                return alert(err);
             })
 
     }
@@ -122,42 +79,31 @@ class Main extends Component {
 
 
     render() {
-        const { searching, links, spinner, product, error, savedProds, savedLinks } = this.state;
+        const { searching, links, spinner, product,maxPrediction } = this.state;
         // const photo = links.photo;
         
         return (
 
             <div className={classes.Main}>
                 <p>Make sure you have strong internet connection!</p>
-                
-                {/* START ==============>HELPER CODE */}
-                <button onClick={this.showAllLinks}>Show all links</button>
 
-                {savedProds.length > 0 ? savedProds.map((prod) => {
-                    return <li key={Math.random()}>{prod}</li>
-                }) : null}
+                <div className={classes.Form}>                
+                    <Form
+                        product={product}
+                        inputChange={this.handleInputChange}
+                        formSubmit={(event) => this.handleForm(event)}
+                        searching={searching} />
+                </div>
 
-                <button onClick={this.deleteLinks}>Delete all </button>
-                {/* END ==============>HELPER CODE */}
-                
-                <Form
-                    product={product}
-                    inputChange={this.handleInputChange}
-                    formSubmit={(event) => this.handleForm(event)}
-                    searching={searching} />
-                    
                 <div className={classes.Spinner}>
                     {spinner ? <Spinner /> : null}
                 </div>
                 
-
-                <div className={classes.Cards}>
-                    <div>
-                        <Cards />
-                    </div>
-                    {/*  
+                <div 
+                    className={classes.Cards}
+                    style={{display:links.length>0 ? 'grid' : 'none'}}>
+                        
                     {links.length > 0 ? links.map((data) => {
-                        console.log(data);
                         return (
                             <Card
                                 product={this.state.product}
@@ -169,10 +115,11 @@ class Main extends Component {
                                 features={data.features}
                                 price={data.price}
                                 prediction={data.prediction}
+                                winner={data.prediction===maxPrediction ? true : false}
                             />
                         )
                     }) : null}
-                    */}
+
                 </div>
 
             </div>

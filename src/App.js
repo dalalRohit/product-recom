@@ -5,14 +5,14 @@ import Main from './containers/Main/Main';
 import Header from './containers/Header/Header';
 // Testing
 import Cards from './containers/Cards/Cards';
+import Spinner from './components/UI/Spinner/Spinner';
 
 const Layout=styled.div`
-    width:100%;
-    height:100%;
-    max-width:100%;
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+  width:100%;
+  height:100%;
+  min-height:100%;
+  max-width:100%;
+  box-sizing:border-box;
 `;
 const Footer=styled.div`
   width:100%;
@@ -22,10 +22,7 @@ const Footer=styled.div`
   max-width:100%;
   box-sizing:border-box;
   padding:.7em;
-  text-align:center;\
-  position:fixed;
-  bottom:0;
-  left:0;
+  text-align:center;
 `
 class App extends Component {
   render() {
@@ -33,7 +30,8 @@ class App extends Component {
         <Layout>
             <Header />
             <Main />
-            {/* <Cards />  */}
+            {/* <Cards /> */}
+            {/* <Spinner /> */}
             {/* <Footer>Footer</Footer> */}
         </Layout>
     );
