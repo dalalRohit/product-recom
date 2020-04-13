@@ -43,7 +43,7 @@ const flipkartProdSpecs=(domContent) => {
         features[label]=values[i];
     })
 
-    var image=$('._1Nyybr.Yun65Y.OGBF1g._30XEf0').attr('src'); //image link of flipkart prod
+    var image=$('._3BTv9X._3iN4zu img').attr('src'); //image link of flipkart prod
     // console.log('Flipkart image link: \n',image);
     var price=$('._1vC4OE._3qQ9m1').text(); //price
     price= price==='' ? 'Price not avaliable' : price;
@@ -51,10 +51,6 @@ const flipkartProdSpecs=(domContent) => {
     return {features,image,price}
 };
 
-// Feature tester REST
-const featureTest=() => {
-
-}
 
 // Scraper for scraping product features
 const scrapeAmazonAll=async (browser,amazonLink,product) => {
@@ -104,11 +100,22 @@ const scrapeAmazonAll=async (browser,amazonLink,product) => {
 
         // FLASK REST API
         console.log('** calling FLASK API for PREDICTION ** \n')
-        let response=await axios.post(`${restapi}/scrape-amazon`,{prod_name,asin,filename});
-        console.log('Model prediction: \n',response.data.ans);
-        data['prediction']=response.data.ans;
-        await prodPage.close();
-        resolve(data);
+        // let response=await axios.post(`${restapi}/scrape-amazon`,{prod_name,asin,filename});
+        axios.post(`${restapi}/scrape-amazon`,{prod_name,asin,filename})
+            .then(async (response) => {
+                console.log('Model prediction: \n',response.data.ans);
+                data['prediction']=response.data.ans;
+                await prodPage.close();
+                resolve(data);
+            })
+            .catch( async (err) => { 
+                await prodPage.close();  
+                reject({
+                    err:"Could not scrape AMAZON product reviews. Server Error 500!",
+                    error:err
+                });
+            })
+
 
     })
 
@@ -155,12 +162,23 @@ const scrapeFlipkartAll=async (browser,flipkartLink,product) => {
         
         // FLASK REST API
         console.log('** calling FLASK API for PREDICTION ** \n')
-        let response=await axios.post(`${restapi}/scrape-flipkart`,{prod:'this_is_the_product'});
-        console.log('Model prediction: \n',response.data.ans);
-        data['prediction']=response.data.ans;
-        await prodPage.close();
-        resolve(data);
+        // let response=await axios.post(`${restapi}/scrape-flipkart`,{prod:'this_is_the_product'});
+        axios.post(`${restapi}/scrape-flipkart`,{prod:`this_is_the_product`})
+            .then( async (response) => {
+                console.log('Model prediction: \n',response.data.ans);
+                data['prediction']=response.data.ans;
+                await prodPage.close();
+                resolve(data);
+            })
+            .catch( async (err) => {   
+                reject({
+                    err:new Error("Could not scrape FLIPKART prouct reviews. Server Error 500!"),
+                    error:err
+                });
+            })
+
     });
+
 
     return flipkartPromise;
 }
@@ -174,19 +192,26 @@ async function flipkartMethod(flipkartLinks,browser,product)
         flipkartPromise.push(scrapeFlipkartAll(browser,flipkartLink.link,product))
     })
     const m=await Promise.all(flipkartPromise);
-    //store flipkart data to mongoDb 
-    let newShraddha=m.map( (p) => {
+    console.log('Printing FLIPKART m \n',m);
+    if(m){
+        let newFlipkartData=m.map( (p) => {
 
-        return {
-            ...p,
-            'features':p['features'],
-            'price':p['price'],
-            'image':p['image']
-        }
+            return {
+                ...p,
+                'features':p['features'],
+                'price':p['price'],
+                'image':p['image']
+            }
 
-    })
+        })
 
-    return {'flipkartData':newShraddha}
+        return {'flipkartData':newFlipkartData}
+    }
+    else{
+        console.log('Error occured.. FLIPKART');
+    }
+
+
 
 
 }
@@ -199,27 +224,33 @@ async function amazonMethod(amazonLinks,browser,product) {
     })
 
     const n=await Promise.all(x);
+    console.log('Printing AMAZON n \n',n);
+    if(n){
+        //store amazon data to mongoDb 
+        let newAmazonData=n.map( (p) => {
+
+            return {
+                ...p,
+                'features':p['features'],
+                'price':p['price'],
+                'image':p['image']
+            };
+
+        })
 
 
-    //store amazon data to mongoDb 
-     let newRohit=n.map( (p) => {
 
-        return {
-            ...p,
-            'features':p['features'],
-            'price':p['price'],
-            'image':p['image']
-        };
+        return {'amazonData':newAmazonData};
+    }
+    else{
+        console.log('Error occured AMAZON..');
+    }
 
-    })
-
-
-
-    return {'amazonData':newRohit};
 };
 
 module.exports={
     amazonMethod,
     flipkartMethod
 };
+
 
