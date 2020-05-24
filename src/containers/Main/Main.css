@@ -1,13 +1,13 @@
 .Main{
     width: 100%;
     max-width: 100%;
+    min-height: 100%;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     display: flex;
     flex-flow: column;
     align-items: center; 
-    overflow-y: auto;
 }
 .Form{
     width: 100%;

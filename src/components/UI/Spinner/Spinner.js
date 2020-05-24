@@ -6,7 +6,6 @@ export default function Spinner(props) {
         <div
             className={classes.loader}>
             Loading......
-            {props.text}
         </div>
     )
 }

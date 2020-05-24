@@ -9,7 +9,6 @@ import productImg from './../../images/product.jpg';
 import Spinner from './../../components/UI/Spinner/Spinner';
 import Form from './../../components/Form/Form';
 import Card from './../../components/Card/Card'
-import Cards from './../Cards/Cards';
 
 class Main extends Component {
 
@@ -41,12 +40,8 @@ class Main extends Component {
             searching: true,
             links: []
         })
-
         axios.post('/rest/links', { product })
             .then(async (res) => {
-                // console.log('--------Main.js------- 97 \n',res.data)
-                // console.log('--------Main.js------- 92 \n',res.data.msg);
-                console.log('--------Main.js---------- res.data \n',res.data)
                 let x=[];
                 let prediction=0;
                 Object.keys(res.data.savedLinks)
@@ -72,7 +67,6 @@ class Main extends Component {
                 this.setState({ error: true, spinner: false, searching: false })
                 return alert(err);
             })
-
     }
 
 
@@ -80,7 +74,6 @@ class Main extends Component {
 
     render() {
         const { searching, links, spinner, product,maxPrediction } = this.state;
-        // const photo = links.photo;
         
         return (
 
@@ -95,9 +88,7 @@ class Main extends Component {
                         searching={searching} />
                 </div>
 
-                <div className={classes.Spinner}>
-                    {spinner ? <Spinner /> : null}
-                </div>
+                {spinner ? <Spinner /> : null}
                 
                 <div 
                     className={classes.Cards}

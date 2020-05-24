@@ -4,7 +4,6 @@ import MenuIcon from './../../components/UI/MenuIcon/MenuIcon';
 import Logo from './../../components/UI/Logo/Logo';
 import Nav from './../../components/Navigation/Nav';
 import Sidenav from './../../components/Sidenav/Sidenav';
-import Auxi from './../../hoc/Auxi/Auxi';
 
 class Header extends Component {
     state = {

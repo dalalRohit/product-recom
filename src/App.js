@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-
+import {Link,Route} from 'react-router-dom';
 import Main from './containers/Main/Main';
 import Header from './containers/Header/Header';
-// Testing
-import Cards from './containers/Cards/Cards';
-import Spinner from './components/UI/Spinner/Spinner';
+import About from './containers/About/About';
+
 
 const Layout=styled.div`
   width:100%;
@@ -30,9 +29,6 @@ class App extends Component {
         <Layout>
             <Header />
             <Main />
-            {/* <Cards /> */}
-            {/* <Spinner /> */}
-            {/* <Footer>Footer</Footer> */}
         </Layout>
     );
   }

@@ -7,9 +7,9 @@ function Nav() {
         <div className={classes.Nav}>
             <nav className={classes.Items}>
                 <ul className={classes.Links}>
-                <li>Home</li>
-                <li>About</li>
-                <li>Paper</li>
+                    <li>Home</li>
+                    <li>About</li>
+                    <li>Paper</li>
                 </ul>
             </nav>
         </div>
