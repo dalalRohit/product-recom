@@ -1,0 +1,28 @@
+.Header{
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 8vh;
+    min-height: 8vh;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: .2rem;
+    color: white;
+}
+
+.navigation{
+    ul{
+        list-style-type: none;
+        display: flex;
+        justify-content: space-between;
+    }
+    ul li{
+        margin: 1rem;
+        cursor: pointer;
+        &:hover{
+            color: plum;
+        }
+    }
+}
