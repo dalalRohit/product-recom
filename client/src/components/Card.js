@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './../styles/Card.css';
+import './../styles/Card.scss';
 
 import amazonLink from './../images/amazon-logo-png.png';
 import flipkartLink from './../images/flipkart-logo.png';
@@ -32,7 +32,7 @@ class Card extends Component
         let arrowToShow=!this.state.toggle ? <IoIosArrowDown size={25} /> : <IoIosArrowUp size={25} />
 
         return (
-            <div className="Card" style={{border:winner ? '3px solid green' : '3px solid red'}}>
+            <div className="Card" style={{outline:winner ? '2px solid green' : '2px solid red'}}>
 
                 <div className="MainCard">
 
@@ -72,33 +72,35 @@ class Card extends Component
                 </div>
 
                 <br />
-                <hr />
 
                 {/* DOWN/UP Arrow  */}
-                <div className="Toggle" onClick={this.handleToggle}>
+                <span className="Toggle" onClick={this.handleToggle}>
                     {arrowToShow}
-                </div>
+                </span>
 
                 {/* Container for Specs and Info */}
-                <div className="Info" 
-                    style={{display:!this.state.toggle ? "none" : "grid"}} >
+                {
+                    this.state.toggle ? 
+                        <div className="Info" >
 
-                    {/* Specifications Table */}
-                    <div className="SpecsTable">
-                        <h3>Specifications</h3>
+                            {/* Specifications Table */}
+                            <section className="SpecsTable">
+                                <h3>Specifications</h3>
 
-                        <Specs features={features ? features : null}/>
-                    </div>
+                                <Specs features={features ? features : null}/>
+                            </section>
 
-                    {/* Detailed analysis */}
-                    <main className="Analysis">
-                        <h3>Analysis</h3>
-                        <Analysis />
+                            {/* Detailed analysis */}
+                            <section className="Analysis">
+                                <h3>Analysis</h3>
+                                <Analysis />
 
-                    </main>
-                
-                </div>
-            
+                            </section>
+                    
+                        </div> 
+                    : null
+                }
+
             </div>
 
         )

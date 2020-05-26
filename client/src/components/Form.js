@@ -13,6 +13,7 @@ function form(props) {
                     type="input"
                     class="form__field" 
                     placeholder="product name" 
+                    autoComplete="off"
                     value={props.product}
                     onChange={props.inputChange}
                     name="name" id='name' 
