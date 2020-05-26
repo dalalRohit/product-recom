@@ -2,7 +2,7 @@ const {improvePuppy}=require('./puppy');
 const cheerio=require('cheerio');
 const restapi='http://localhost:5000';
 const axios=require('axios');
-const puppeteer=require('puppeteer');
+const puppeteer=require('puppeteer-core');
 const {amazonLinkFeatures}=require('./helper');
 
 // Scraper for product features

@@ -8,6 +8,9 @@ const {amazonMethod,flipkartMethod}=require('./../utils/final');
 // Firebase config file
 const { dataRef, getAllLinks, deleteAllLinks } = require('./../utils/store');
 
+const printObject=(obj) => {
+    console.log(JSON.stringify(obj,null,4));
+}
 
 // POST /links
 router.post('/links', async function (req, res, next) {
@@ -15,7 +18,8 @@ router.post('/links', async function (req, res, next) {
     var product = String(req.body.product.trim()).toLowerCase();
     //--------------------GLOBAL OBJECT----------------------------------
     let allLinks = await getAllLinks() === null ? {} : await getAllLinks();
-
+    printObject(allLinks);
+    
     if (allLinks !== null) {
 
         //if product is already there in FIREBASE

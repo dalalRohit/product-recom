@@ -7,6 +7,7 @@
     "dev": "nodemon ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
     "compression": "^1.7.4",
     "cookie-parser": "~1.4.3",
@@ -16,10 +17,13 @@
     "ejs": "~2.5.7",
     "express": "~4.16.0",
     "firebase-admin": "^8.5.0",
+    "helmet": "^3.22.0",
     "http-errors": "~1.6.2",
     "moment": "^2.24.0",
+    "mongoose": "^5.9.15",
     "morgan": "~1.9.0",
     "puppeteer": "^2.1.1",
+    "puppeteer-core": "^3.1.0",
     "uuid": "^7.0.3"
   },
   "devDependencies": {

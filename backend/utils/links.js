@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 var cheerio = require('cheerio');
 
 const { getGoogleLinks, getImage } = require('./helper');
@@ -11,7 +11,7 @@ const scrapeLinksFromGoogle = async (prod) => {
 
     let launchOptions = {
         headless: false,
-        // executablePath: 'C:\\Users\\dalal\\AppData\\Local\\Google\\Chrome SxS\\Application\\chrome.exe', // because we are using puppeteer-core so we must define this option
+        executablePath: 'C:\\Users\\dalal\\AppData\\Local\\Google\\Chrome SxS\\Application\\chrome.exe', // because we are using puppeteer-core so we must define this option
         ignoreHTTPSErrors: true,
         waitUntil: 'networkidle',
         args: [
