@@ -1,5 +1,3 @@
-const restapi = 'http://localhost:5000'
-const axios = require('axios');
 var cheerio = require('cheerio');
 const {improvePuppy}=require('./puppy');
 
@@ -26,8 +24,8 @@ const flipkartProdSpecs=(domContent) => {
         features[label]=values[i];
     })
 
-    var image=$('._1Nyybr.Yun65Y.OGBF1g._30XEf0').attr('src') //image link of flipkart prod
-    console.log('\n\n image=> ',image);
+    var image=$('._3BTv9X._3iN4zu').find('img').attr('src') //image link of flipkart prod
+    console.log('\n\n Flipkart image=> ',image);
     var price=$('._1vC4OE._3qQ9m1').text(); //price
     
     return {features,image,price}

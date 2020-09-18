@@ -4,6 +4,11 @@
 /node_modules
 /.pnp
 .pnp.js
+*.env
+*.json
+/backend/play
+/backend/node_modules
+/client/node_modules
 
 # testing
 /coverage
