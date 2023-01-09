@@ -16,7 +16,7 @@
     "dotenv": "^8.1.0",
     "ejs": "~2.5.7",
     "express": "~4.16.0",
-    "firebase-admin": "^8.5.0",
+    "firebase-admin": "^11.4.1",
     "helmet": "^3.22.0",
     "http-errors": "~1.6.2",
     "moment": "^2.24.0",
